@@ -4,12 +4,40 @@ import { Column } from "./Column";
 class View {
   id: string;
   name: string;
-  fields: Column[];
+  viewColumns: Column[];
 
-  constructor(name: string, fields: Column[]) {
+  constructor(name: string, viewColumns: Column[]) {
     this.id = uuidv4();
     this.name = name;
-    this.fields = fields;
+    this.viewColumns = viewColumns;
+  }
+
+  addField(column: Column) {
+    this.viewColumns.push(column);
+  }
+
+  removeField(columnId: string) {
+    this.viewColumns = this.viewColumns.filter(
+      (column) => column.id !== columnId
+    );
+  }
+}
+
+class ListView extends View {
+  constructor() {
+    super("List View", []);
+  }
+}
+
+class CalendarView extends View {
+  constructor() {
+    super("Calendar View", []);
+  }
+}
+
+class GaleryView extends View {
+  constructor() {
+    super("Galery View", []);
   }
 }
 

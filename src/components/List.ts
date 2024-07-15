@@ -28,8 +28,8 @@ class List {
     this.columns.push(Column);
   }
 
-  addItem() {
-    let item = new Item(this.columns);
+  addItem(data: Record<string, any>) {
+    let item = new Item(this.columns, data);
     this.items.push(item);
   }
 
