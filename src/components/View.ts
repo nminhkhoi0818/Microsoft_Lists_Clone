@@ -41,4 +41,10 @@ class GaleryView extends View {
   }
 }
 
+class BoardView extends View {
+  constructor() {
+    super("Board View", []);
+  }
+}
+
 export default View;

@@ -1,8 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import Item from "./Item";
-import Rule from "./Rule";
 import View from "./View";
-import { Column } from "./Column";
+import { Column, TextColumn } from "./Column";
 import Form from "./Form";
 
 class List {
@@ -12,7 +11,6 @@ class List {
   items: Item[];
   views: View[];
   forms: Form[];
-  rules: Rule[];
 
   constructor(name: string) {
     this.id = uuidv4();
@@ -21,15 +19,17 @@ class List {
     this.items = [];
     this.views = [];
     this.forms = [];
-    this.rules = [];
   }
 
   addColumn(Column: Column) {
     this.columns.push(Column);
   }
 
-  addItem(data: Record<string, any>) {
-    let item = new Item(this.columns, data);
+  addItem(...data: any[]) {
+    const item = new Item(this.columns);
+    data.forEach((value, index) => {
+      item.columns[index].setValue(value);
+    });
     this.items.push(item);
   }
 
