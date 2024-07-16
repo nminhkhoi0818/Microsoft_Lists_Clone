@@ -7,6 +7,23 @@ import {
   TextColumn,
   YesNoColumn,
 } from "./Column";
+import { ColumnType } from "./Enum";
+
+class ColumnFactory {
+  static mapColumn: { [key: string]: () => Column } = {
+    [ColumnType.Text]: () => new TextColumn("", ""),
+    [ColumnType.Number]: () => new NumberColumn("", 0),
+    [ColumnType.YesNo]: () => new YesNoColumn("", false),
+    [ColumnType.Date]: () => new DateColumn("", new Date()),
+    [ColumnType.Choice]: () => new ChoiceColumn("", []),
+  };
+
+  static createColumn(type: ColumnType, name: string): Column {
+    const column = this.mapColumn[type]();
+    column.name = name;
+    return column;
+  }
+}
 
 class Item {
   id: string;
@@ -14,25 +31,9 @@ class Item {
 
   constructor(columns: Column[]) {
     this.id = uuidv4();
-    this.columns = columns.map((col) => {
-      if (col instanceof TextColumn) {
-        return new TextColumn(col.name);
-      }
-      if (col instanceof NumberColumn) {
-        return new NumberColumn(col.name);
-      }
-      if (col instanceof YesNoColumn) {
-        return new YesNoColumn(col.name);
-      }
-      if (col instanceof DateColumn) {
-        return new DateColumn(col.name);
-      }
-      if (col instanceof ChoiceColumn) {
-        return new ChoiceColumn(col.name, col.options);
-      }
-      throw new Error("Unsupported column type");
+    this.columns = columns.map((column) => {
+      return ColumnFactory.createColumn(column.type, column.name);
     });
-    // this.columns = columns;
   }
 
   setValueCol(name: string, value: any) {

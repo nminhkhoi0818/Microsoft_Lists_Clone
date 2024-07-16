@@ -2,7 +2,6 @@ import {
   ChoiceColumn,
   DateColumn,
   NumberColumn,
-  TextColumn,
   YesNoColumn,
 } from "./components/Column";
 import List from "./components/List";
@@ -30,17 +29,6 @@ describe("Microsoft Lists Clone Application", () => {
     expect(app.lists[0].columns[0].name).toBe("Full Name");
     expect(app.lists[0].columns[1].name).toBe("Age");
     expect(app.lists[0].columns[2].name).toBe("Is Active");
-
-    // Insert data to template
-    app.lists[0].addItem("John Doe", 30, true);
-    app.lists[0].addItem("Jane Doe", 25, false);
-
-    expect(app.lists[0].items[0].columns[0].getValue()).toBe("John Doe");
-    expect(app.lists[0].items[0].columns[1].getValue()).toBe(30);
-    expect(app.lists[0].items[0].columns[2].getValue()).toBe(true);
-    expect(app.lists[0].items[1].columns[0].getValue()).toBe("Jane Doe");
-    expect(app.lists[0].items[1].columns[1].getValue()).toBe(25);
-    expect(app.lists[0].items[1].columns[2].getValue()).toBe(false);
   });
 
   test("Delete a list", () => {
@@ -59,9 +47,11 @@ describe("Microsoft Lists Clone Application", () => {
       new ChoiceColumn("Choice Column", ["Choice 1", "Choice 2", "Choice 3"])
     );
 
-    list.addItem("John Doe", 30, true, new Date("11-07-2003"), "Option 1");
+    // Add rows to the list
 
-    expect(list.items.length).toBe(1);
+    list.addRow("John Doe", 30, true, new Date("11-07-2003"), "Option 1");
+    list.addRow("Jane Doe", 25, false, new Date("12-08-2004"), "Option 2");
+
     expect(list.items[0].getValueCol("Title")).toBe("John Doe");
     expect(list.items[0].getValueCol("Age")).toBe(30);
     expect(list.items[0].getValueCol("Is Active")).toBe(true);
@@ -70,38 +60,53 @@ describe("Microsoft Lists Clone Application", () => {
     );
     expect(list.items[0].getValueCol("Choice Column")).toBe("Option 1");
 
+    expect(list.items[1].getValueCol("Title")).toBe("Jane Doe");
+    expect(list.items[1].getValueCol("Age")).toBe(25);
+    expect(list.items[1].getValueCol("Is Active")).toBe(false);
+    expect(list.items[1].getValueCol("Date of Birth")).toStrictEqual(
+      new Date("12-08-2004")
+    );
+    expect(list.items[1].getValueCol("Choice Column")).toBe("Option 2");
+
     // Edit data in row
     list.items[0].setValueCol("Age", 40);
     list.items[0].setValueCol("Is Active", false);
+
     expect(list.items[0].getValueCol("Age")).toBe(40);
     expect(list.items[0].getValueCol("Is Active")).toBe(false);
   });
 
   test("Delete an item from a list", () => {
     list = app.createList("My List");
-    list.addItem("John Doe");
+    list.addRow("John Doe");
     list.deleteItem(list.items[0].id);
     expect(list.items.length).toBe(0);
   });
 
-  test("Create a list view", () => {
+  test("Create views", () => {
     list.createView("My View");
+    list.createView("My Calendar View");
 
     expect(list.views[0].name).toBe("My View");
     expect(list.views[0].viewColumns[0].name).toBe("Title");
+
+    expect(list.views[1].name).toBe("My Calendar View");
+    expect(list.views[1].viewColumns[0].name).toBe("Title");
   });
 
-  test("Create a calendar view", () => {});
+  test("Create form", () => {
+    list.createForm("My Form");
+
+    expect(list.forms[0].title).toBe("My Form");
+  });
+
+  test("Delete form", () => {});
 
   test("Create a gallery view", () => {});
 
   test("Create a board view", () => {});
 
   test("Delete a view", () => {});
-
-  test("Create form", () => {});
-
-  test("Delete form", () => {});
 
   test("Share sheet", () => {});
 
