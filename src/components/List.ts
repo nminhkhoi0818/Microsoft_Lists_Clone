@@ -1,14 +1,14 @@
 import { v4 as uuidv4 } from "uuid";
-import View from "./View";
 import { Column } from "./Column";
 import Form from "./Form";
-import Item from "./Item";
+import Row from "./Row";
+import { View } from "./View";
 
 class List {
   id: string;
   name: string;
   columns: Column[];
-  items: Item[];
+  rows: Row[];
   views: View[];
   forms: Form[];
 
@@ -16,43 +16,57 @@ class List {
     this.id = uuidv4();
     this.name = name;
     this.columns = [];
-    this.items = [];
+    this.rows = [];
     this.views = [];
     this.forms = [];
   }
 
   addColumn(column: Column) {
     this.columns.push(column);
+
+    this.rows.forEach((row) => {
+      row.addColumn(column);
+    });
   }
 
   addRow(...data: any[]) {
-    const item: Item = new Item(this.columns);
+    const row: Row = new Row(this.columns);
+
     data.forEach((value, index) => {
-      item.columns[index].setValue(value);
+      row.columns[index].setValue(value);
     });
-    this.items.push(item);
+
+    this.rows.push(row);
   }
 
-  deleteItem(itemId: string) {
-    this.items = this.items.filter((item) => item.id !== itemId);
+  getRow(index: number) {
+    if (index < 0 || index >= this.rows.length) {
+      throw new Error("Index out of bounds");
+    }
+    return this.rows[index];
   }
 
-  createView(name: string) {
-    let view = new View(name, this.columns);
+  deleteRow(rowId: string) {
+    this.rows = this.rows.filter((row) => row.id !== rowId);
+  }
+
+  deleteColumn(colName: string) {
+    this.columns = this.columns.filter((col) => col.name !== colName);
+
+    this.rows.forEach((row) => {
+      row.columns = row.columns.filter((col) => col.name !== colName);
+    });
+  }
+
+  addView(name: string, view: View) {
+    view.name = name;
     this.views.push(view);
   }
 
-  deleteView(viewId: string) {
-    this.views = this.views.filter((view) => view.id !== viewId);
-  }
-
   createForm(name: string) {
-    let form = new Form(name, this.columns);
+    const form = new Form(name, this.columns);
     this.forms.push(form);
-  }
-
-  deleteForm(formId: string) {
-    this.forms = this.forms.filter((form) => form.id !== formId);
+    return form;
   }
 }
 

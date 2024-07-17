@@ -4,20 +4,23 @@ import { Column } from "./Column";
 class Form {
   id: string;
   title: string;
-  fields: Column[];
+  columns: Column[];
 
-  constructor(title: string, fields: Column[]) {
+  constructor(title: string, columns: Column[]) {
     this.id = uuidv4();
     this.title = title;
-    this.fields = fields;
+    this.columns = columns;
   }
 
-  addField(field: Column) {
-    this.fields.push(field);
+  addField(column: Column) {
+    if (this.columns.find((field) => field.name === column.name)) {
+      throw new Error("Field name already exists");
+    }
+    this.columns.push(column);
   }
 
-  deleteField(columnId: string) {
-    this.fields = this.fields.filter((field) => field.id !== columnId);
+  hideField(colName: string) {
+    this.columns = this.columns.filter((field) => field.name !== colName);
   }
 }
 

@@ -1,4 +1,4 @@
-enum ColumnType {
+enum EnumColumnType {
   Text,
   Number,
   YesNo,
@@ -13,4 +13,11 @@ enum ColumnType {
   Lookup,
 }
 
-export { ColumnType };
+enum EnumViewType {
+  List,
+  Calendar,
+  Gallery,
+  Board,
+}
+
+export { EnumColumnType, EnumViewType };

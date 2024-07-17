@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
-import { ColumnType } from "./Enum";
+import { EnumColumnType } from "./Enum";
 
 abstract class Column {
   id: string;
   name: string;
-  type: ColumnType;
+  type: EnumColumnType;
 
-  constructor(name: string, type: ColumnType) {
+  constructor(name: string, type: EnumColumnType) {
     this.id = uuidv4();
     this.name = name;
     this.type = type;
@@ -20,7 +20,7 @@ class TextColumn extends Column {
   value: string;
 
   constructor(name: string = "", value: string = "") {
-    super(name, ColumnType.Text);
+    super(name, EnumColumnType.Text);
     this.value = value;
   }
 
@@ -37,7 +37,7 @@ class NumberColumn extends Column {
   value: number;
 
   constructor(name: string = "", value: number = 0) {
-    super(name, ColumnType.Number);
+    super(name, EnumColumnType.Number);
     this.value = value;
   }
 
@@ -54,7 +54,7 @@ class YesNoColumn extends Column {
   value: boolean;
 
   constructor(name: string = "", value: boolean = false) {
-    super(name, ColumnType.YesNo);
+    super(name, EnumColumnType.YesNo);
     this.value = value;
   }
 
@@ -71,7 +71,7 @@ class DateColumn extends Column {
   value: Date;
 
   constructor(name: string = "", value: Date = new Date()) {
-    super(name, ColumnType.Date);
+    super(name, EnumColumnType.Date);
     this.value = value;
   }
 
@@ -89,13 +89,121 @@ class ChoiceColumn extends Column {
   options: string[];
 
   constructor(name: string = "", options: string[] = [], value: string = "") {
-    super(name, ColumnType.Choice);
-    this.value = value;
+    super(name, EnumColumnType.Choice);
     this.options = options;
+    this.value = value;
   }
 
   addOption(option: string) {
     this.options.push(option);
+  }
+
+  setValue(value: string) {
+    this.value = value;
+  }
+
+  getValue() {
+    return this.value;
+  }
+}
+
+class HyperLinkColumn extends Column {
+  value: string;
+
+  constructor(name: string = "", value: string = "") {
+    super(name, EnumColumnType.Hyperlink);
+    this.value = value;
+  }
+
+  setValue(value: string) {
+    this.value = value;
+  }
+
+  getValue() {
+    return this.value;
+  }
+}
+
+class CurrencyColumn extends Column {
+  value: number;
+  decimalPlaces: number;
+  currencyFormat: string;
+  defaultValue: number;
+
+  constructor(name: string = "", value: number = 0) {
+    super(name, EnumColumnType.Currency);
+    this.value = value;
+    this.decimalPlaces = 2;
+    this.currencyFormat = "USD";
+    this.defaultValue = 0;
+  }
+
+  setValue(value: number) {
+    this.value = value;
+  }
+
+  getValue() {
+    return this.value;
+  }
+}
+
+class LocationColumn extends Column {
+  value: string;
+
+  constructor(name: string = "", value: string = "") {
+    super(name, EnumColumnType.Location);
+    this.value = value;
+  }
+
+  setValue(value: string) {
+    this.value = value;
+  }
+
+  getValue() {
+    return this.value;
+  }
+}
+
+class ImageColumn extends Column {
+  value: string;
+
+  constructor(name: string = "", value: string = "") {
+    super(name, EnumColumnType.Image);
+    this.value = value;
+  }
+
+  setValue(value: string) {
+    this.value = value;
+  }
+
+  getValue() {
+    return this.value;
+  }
+}
+
+class ManagedMetadataColumn extends Column {
+  value: string;
+
+  constructor(name: string = "", value: string = "") {
+    super(name, EnumColumnType.ManagedMetadata);
+    this.value = value;
+  }
+
+  setValue(value: string) {
+    this.value = value;
+  }
+
+  getValue() {
+    return this.value;
+  }
+}
+
+class LookupColumn extends Column {
+  value: string;
+
+  constructor(name: string = "", value: string = "") {
+    super(name, EnumColumnType.Lookup);
+    this.value = value;
   }
 
   setValue(value: string) {
@@ -114,4 +222,10 @@ export {
   NumberColumn,
   YesNoColumn,
   ChoiceColumn,
+  HyperLinkColumn,
+  CurrencyColumn,
+  LocationColumn,
+  ImageColumn,
+  ManagedMetadataColumn,
+  LookupColumn,
 };

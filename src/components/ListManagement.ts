@@ -7,6 +7,7 @@ import {
 } from "./Column";
 import List from "./List";
 import Template from "./Template";
+import fs from "fs";
 
 class ListManagement {
   lists: List[];
@@ -17,44 +18,42 @@ class ListManagement {
     this.templates = [];
   }
 
-  createDefaultTemplates() {
-    const template1 = new Template(
-      "Template tracker",
-      [
-        new TextColumn("Full Name"),
-        new NumberColumn("Age"),
-        new YesNoColumn("Is Active"),
-      ],
-      "A template for tracking people"
-    );
+  loadTemplates(filePath: string) {
+    const jsonData = fs.readFileSync(filePath, "utf-8");
+    const data = JSON.parse(jsonData);
 
-    const template2 = new Template(
-      "Task tracker",
-      [
-        new TextColumn("Task Name"),
-        new DateColumn("Due Date"),
-        new YesNoColumn("Completed"),
-        new ChoiceColumn("Priority", ["High", "Medium", "Low"]),
-      ],
-      "A template for tracking tasks"
-    );
-
-    const template3 = new Template(
-      "Project tracker",
-      [
-        new TextColumn("Project Name"),
-        new DateColumn("Start Date"),
-        new DateColumn("End Date"),
-        new NumberColumn("Budget"),
-        new ChoiceColumn("Status", ["Pending", "In Progress", "Completed"]),
-      ],
-      "A template for tracking projects"
-    );
-
-    this.templates.push(template1, template2, template3);
+    data.templates.forEach((template: any) => {
+      const columns = template.columns.map((columnData: any) => {
+        switch (columnData.type) {
+          case "TextColumn":
+            return new TextColumn(columnData.name);
+          case "NumberColumn":
+            return new NumberColumn(columnData.name);
+          case "YesNoColumn":
+            return new YesNoColumn(columnData.name);
+          case "DateColumn":
+            return new DateColumn(columnData.name);
+          case "ChoiceColumn":
+            return new ChoiceColumn(columnData.name, columnData.choices);
+          default:
+            throw new Error(`Unknown column type: ${columnData.type}`);
+        }
+      });
+      const newTemplate = new Template(
+        template.name,
+        columns,
+        template.summary
+      );
+      this.templates.push(newTemplate);
+    });
   }
 
   createList(name: string) {
+    const existingList = this.lists.find((list) => list.name === name);
+    if (existingList) {
+      throw new Error("List with the same name already exists");
+    }
+
     let newList = new List(name);
     // Add default column
     newList.addColumn(new TextColumn("Title"));
@@ -63,12 +62,18 @@ class ListManagement {
   }
 
   createFromTemplate(name: string, templateId: string) {
+    const existingList = this.lists.find((list) => list.name === name);
+    if (existingList) {
+      throw new Error("List with the same name already exists");
+    }
+
     let template = this.templates.find(
       (template) => template.id === templateId
     );
     let list = new List(name);
     list.columns = template!.columns;
     this.lists.push(list);
+    return list;
   }
 
   deleteList(listId: string) {

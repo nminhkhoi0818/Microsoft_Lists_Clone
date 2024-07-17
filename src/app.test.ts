@@ -2,10 +2,18 @@ import {
   ChoiceColumn,
   DateColumn,
   NumberColumn,
+  TextColumn,
   YesNoColumn,
 } from "./components/Column";
 import List from "./components/List";
 import ListManagement from "./components/ListManagement";
+import path from "path";
+import {
+  BoardView,
+  CalendarView,
+  GalleryView,
+  ListView,
+} from "./components/View";
 
 describe("Microsoft Lists Clone Application", () => {
   let app: ListManagement;
@@ -13,31 +21,62 @@ describe("Microsoft Lists Clone Application", () => {
 
   beforeEach(() => {
     app = new ListManagement();
-    app.createDefaultTemplates();
-  });
-  test("Create a blank list", () => {
-    app.createList("Blank List");
-
-    expect(app.lists[0].name).toBe("Blank List");
-    expect(app.lists[0].columns[0].name).toBe("Title"); // Default column
+    const filePath = path.resolve(__dirname, "data/templates.json");
+    app.loadTemplates(filePath);
   });
 
-  test("Create a list from template", () => {
-    app.createFromTemplate("Template List", app.templates[0].id);
+  test("Add template and update data in row", () => {
+    list = app.createFromTemplate("Task tracker", app.templates[1].id);
 
-    expect(app.lists[0].name).toBe("Template List");
-    expect(app.lists[0].columns[0].name).toBe("Full Name");
-    expect(app.lists[0].columns[1].name).toBe("Age");
-    expect(app.lists[0].columns[2].name).toBe("Is Active");
+    const expectedColumns = ["Task Name", "Due Date", "Completed", "Priority"];
+
+    list.columns.forEach((column, index) => {
+      expect(column.name).toBe(expectedColumns[index]);
+    });
+
+    list.addRow();
+    list.addRow();
+
+    const row1 = list.getRow(0);
+    row1.setValueCol("Task Name", "Task 1");
+    row1.setValueCol("Due Date", new Date("11-07-2003"));
+    row1.setValueCol("Completed", true);
+    row1.setValueCol("Priority", "High");
+
+    const row2 = list.getRow(1);
+    row2.setValueCol("Task Name", "Task 2");
+    row2.setValueCol("Due Date", new Date("12-08-2004"));
+    row2.setValueCol("Completed", false);
+    row2.setValueCol("Priority", "Low");
+
+    const expectedData = [
+      {
+        "Task Name": "Task 1",
+        "Due Date": new Date("11-07-2003"),
+        Completed: true,
+        Priority: "High",
+      },
+      {
+        "Task Name": "Task 2",
+        "Due Date": new Date("12-08-2004"),
+        Completed: false,
+        Priority: "Low",
+      },
+    ];
+
+    list.rows.forEach((row, index) => {
+      expect(row.getValueCol("Task Name")).toBe(
+        expectedData[index]["Task Name"]
+      );
+      expect(row.getValueCol("Due Date")).toStrictEqual(
+        expectedData[index]["Due Date"]
+      );
+      expect(row.getValueCol("Completed")).toBe(expectedData[index].Completed);
+      expect(row.getValueCol("Priority")).toBe(expectedData[index].Priority);
+    });
   });
 
-  test("Delete a list", () => {
-    app.createList("My List");
-    app.deleteList(app.lists[0].id);
-    expect(app.lists.length).toBe(0);
-  });
-
-  test("Add new columns and insert data", () => {
+  test("Add new columns, insert data and delete columns", () => {
     let list = app.createList("My List");
 
     list.addColumn(new NumberColumn("Age"));
@@ -47,66 +86,110 @@ describe("Microsoft Lists Clone Application", () => {
       new ChoiceColumn("Choice Column", ["Choice 1", "Choice 2", "Choice 3"])
     );
 
-    // Add rows to the list
-
     list.addRow("John Doe", 30, true, new Date("11-07-2003"), "Option 1");
     list.addRow("Jane Doe", 25, false, new Date("12-08-2004"), "Option 2");
 
-    expect(list.items[0].getValueCol("Title")).toBe("John Doe");
-    expect(list.items[0].getValueCol("Age")).toBe(30);
-    expect(list.items[0].getValueCol("Is Active")).toBe(true);
-    expect(list.items[0].getValueCol("Date of Birth")).toStrictEqual(
-      new Date("11-07-2003")
-    );
-    expect(list.items[0].getValueCol("Choice Column")).toBe("Option 1");
+    list.addColumn(new NumberColumn("Salary"));
 
-    expect(list.items[1].getValueCol("Title")).toBe("Jane Doe");
-    expect(list.items[1].getValueCol("Age")).toBe(25);
-    expect(list.items[1].getValueCol("Is Active")).toBe(false);
-    expect(list.items[1].getValueCol("Date of Birth")).toStrictEqual(
-      new Date("12-08-2004")
-    );
-    expect(list.items[1].getValueCol("Choice Column")).toBe("Option 2");
+    const expectedData = [
+      {
+        Title: "John Doe",
+        Age: 30,
+        "Is Active": true,
+        "Date of Birth": new Date("11-07-2003"),
+        "Choice Column": "Option 1",
+        Salary: 0,
+      },
+      {
+        Title: "Jane Doe",
+        Age: 25,
+        "Is Active": false,
+        "Date of Birth": new Date("12-08-2004"),
+        "Choice Column": "Option 2",
+        Salary: 0,
+      },
+    ];
 
-    // Edit data in row
-    list.items[0].setValueCol("Age", 40);
-    list.items[0].setValueCol("Is Active", false);
+    list.rows.forEach((row, index) => {
+      expect(row.getValueCol("Title")).toBe(expectedData[index].Title);
+      expect(row.getValueCol("Age")).toBe(expectedData[index].Age);
+      expect(row.getValueCol("Is Active")).toBe(
+        expectedData[index]["Is Active"]
+      );
+      expect(row.getValueCol("Date of Birth")).toStrictEqual(
+        expectedData[index]["Date of Birth"]
+      );
+      expect(row.getValueCol("Choice Column")).toStrictEqual(
+        expectedData[index]["Choice Column"]
+      );
+      expect(row.getValueCol("Salary")).toBe(expectedData[index].Salary);
+    });
 
-    expect(list.items[0].getValueCol("Age")).toBe(40);
-    expect(list.items[0].getValueCol("Is Active")).toBe(false);
+    // Delete columns
+    list.deleteColumn("Age");
+    list.deleteColumn("Date of Birth");
+
+    list.rows.forEach((row) => {
+      expect(row.getValueCol("Age")).toBeUndefined();
+      expect(row.getValueCol("Date of Birth")).toBeUndefined();
+    });
+
+    // Delete rows
+    list.deleteRow(list.rows[0].id);
+    expect(list.rows.length).toBe(1);
   });
 
-  test("Delete an item from a list", () => {
-    list = app.createList("My List");
-    list.addRow("John Doe");
-    list.deleteItem(list.items[0].id);
-    expect(list.items.length).toBe(0);
-  });
-
-  test("Create views", () => {
-    list.createView("My View");
-    list.createView("My Calendar View");
-
-    expect(list.views[0].name).toBe("My View");
-    expect(list.views[0].viewColumns[0].name).toBe("Title");
-
-    expect(list.views[1].name).toBe("My Calendar View");
-    expect(list.views[1].viewColumns[0].name).toBe("Title");
+  test("Delete a list", () => {
+    app.createList("My List");
+    app.deleteList(app.lists[0].id);
+    expect(app.lists.length).toBe(0);
   });
 
   test("Create form", () => {
-    list.createForm("My Form");
+    list = app.createList("My List");
 
-    expect(list.forms[0].title).toBe("My Form");
+    let form = list.createForm("Student Form");
+    form.addField(
+      new ChoiceColumn("Student Choice", ["Choice 1", "Choice 2", "Choice 3"])
+    );
+    form.addField(new TextColumn("Student Name", ""));
+    form.addField(new NumberColumn("Student Age", 0));
+
+    form.hideField("Title");
+    form.hideField("Student Choice");
+
+    const expectedForm = ["Student Name", "Student Age"];
+
+    form.columns.forEach((column, index) => {
+      expect(column.name).toBe(expectedForm[index]);
+    });
+
+    const expectedColumns = [
+      "Title",
+      "Student Choice",
+      "Student Name",
+      "Student Age",
+    ];
+
+    // Check column should be added in list
+    list.columns.forEach((column, index) => {
+      expect(column.name).toBe(expectedColumns[index]);
+    });
+
+  });
+
+  test("Create new view", () => {
+    list = app.createFromTemplate("Project tracker", app.templates[2].id);
+
+    list.addColumn(new ChoiceColumn("Priority", ["High", "Medium", "Low"]));
+    list.addRow("Task 1", new Date("11-07-2003"), true, "High");
+    list.addRow("Task 2", new Date("12-08-2004"), false, "Low");
+
+    list.addView("Board View", new BoardView("Board View", "Priority"));
+    list.views[0].changeBucket(, column.name);
   });
 
   test("Delete form", () => {});
-
-  test("Create a gallery view", () => {});
-
-  test("Create a board view", () => {});
-
-  test("Delete a view", () => {});
 
   test("Share sheet", () => {});
 

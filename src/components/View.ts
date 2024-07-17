@@ -1,50 +1,43 @@
 import { v4 as uuidv4 } from "uuid";
 import { Column } from "./Column";
+import { EnumViewType } from "./Enum";
 
-class View {
+abstract class View {
   id: string;
   name: string;
+  type: EnumViewType;
   viewColumns: Column[];
 
-  constructor(name: string, viewColumns: Column[]) {
+  constructor(name: string, type: EnumViewType) {
     this.id = uuidv4();
     this.name = name;
-    this.viewColumns = viewColumns;
-  }
-
-  addField(column: Column) {
-    this.viewColumns.push(column);
-  }
-
-  removeField(columnId: string) {
-    this.viewColumns = this.viewColumns.filter(
-      (column) => column.id !== columnId
-    );
+    this.type = type;
+    this.viewColumns = [];
   }
 }
 
 class ListView extends View {
-  constructor() {
-    super("List View", []);
+  constructor(name: string) {
+    super(name, EnumViewType.List);
   }
 }
 
 class CalendarView extends View {
-  constructor() {
-    super("Calendar View", []);
+  constructor(name: string) {
+    super(name, EnumViewType.Calendar);
   }
 }
 
-class GaleryView extends View {
-  constructor() {
-    super("Galery View", []);
+class GalleryView extends View {
+  constructor(name: string) {
+    super(name, EnumViewType.Gallery);
   }
 }
 
 class BoardView extends View {
-  constructor() {
-    super("Board View", []);
+  constructor(name: string) {
+    super(name, EnumViewType.Board);
   }
 }
 
-export default View;
+export { View, ListView, CalendarView, GalleryView, BoardView };
