@@ -1,11 +1,6 @@
-import {
-  ChoiceColumn,
-  DateColumn,
-  NumberColumn,
-  TextColumn,
-  YesNoColumn,
-} from "./Column";
+import { TextColumn } from "./Column";
 import List from "./List";
+import { ColumnFactory } from "./Row";
 import Template from "./Template";
 import fs from "fs";
 
@@ -16,36 +11,6 @@ class ListManagement {
   constructor() {
     this.lists = [];
     this.templates = [];
-  }
-
-  loadTemplates(filePath: string) {
-    const jsonData = fs.readFileSync(filePath, "utf-8");
-    const data = JSON.parse(jsonData);
-
-    data.templates.forEach((template: any) => {
-      const columns = template.columns.map((columnData: any) => {
-        switch (columnData.type) {
-          case "TextColumn":
-            return new TextColumn(columnData.name);
-          case "NumberColumn":
-            return new NumberColumn(columnData.name);
-          case "YesNoColumn":
-            return new YesNoColumn(columnData.name);
-          case "DateColumn":
-            return new DateColumn(columnData.name);
-          case "ChoiceColumn":
-            return new ChoiceColumn(columnData.name, columnData.choices);
-          default:
-            throw new Error(`Unknown column type: ${columnData.type}`);
-        }
-      });
-      const newTemplate = new Template(
-        template.name,
-        columns,
-        template.summary
-      );
-      this.templates.push(newTemplate);
-    });
   }
 
   createList(name: string) {
@@ -76,6 +41,31 @@ class ListManagement {
     return list;
   }
 
+  loadTemplates(filePath: string) {
+    const jsonData = fs.readFileSync(filePath, "utf-8");
+    const data = JSON.parse(jsonData);
+
+    data.templates.forEach((template: any) => {
+      const columns = template.columns.map((columnData: any) => {
+        return ColumnFactory.createColumn(columnData.type, columnData.name);
+      });
+
+      const newTemplate = new Template(
+        template.name,
+        columns,
+        template.description
+      );
+      this.templates.push(newTemplate);
+    });
+  }
+
+  saveLists(filePath: string) {
+    const data = {
+      lists: this.lists,
+    };
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  }
+
   deleteList(listId: string) {
     this.lists = this.lists.filter((list) => list.id !== listId);
   }
@@ -84,8 +74,8 @@ class ListManagement {
     return this.lists.find((list) => list.id === listId);
   }
 
-  getTemplateById(templateId: string) {
-    return this.templates.find((template) => template.id === templateId);
+  getTemplate(templateName: string) {
+    return this.templates.find((template) => template.name === templateName);
   }
 }
 

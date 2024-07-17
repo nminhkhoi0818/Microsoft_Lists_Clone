@@ -7,7 +7,7 @@ import {
   TextColumn,
   YesNoColumn,
 } from "./Column";
-import { EnumColumnType } from "./Enum";
+import { EnumChoiceType, EnumColumnType } from "./Enum";
 
 class ColumnFactory {
   static mapColumn: { [key: string]: () => Column } = {
@@ -15,7 +15,8 @@ class ColumnFactory {
     [EnumColumnType.Number]: () => new NumberColumn("", 0),
     [EnumColumnType.YesNo]: () => new YesNoColumn("", false),
     [EnumColumnType.Date]: () => new DateColumn("", new Date()),
-    [EnumColumnType.Choice]: () => new ChoiceColumn("", []),
+    [EnumColumnType.Choice]: () =>
+      new ChoiceColumn("", EnumChoiceType.Single, []),
     [EnumColumnType.Hyperlink]: () => new TextColumn("", ""),
     [EnumColumnType.Currency]: () => new NumberColumn("", 0),
     [EnumColumnType.Location]: () => new TextColumn("", ""),
@@ -25,8 +26,14 @@ class ColumnFactory {
   };
 
   static createColumn(type: EnumColumnType, name: string): Column {
+    const columnFactory = this.mapColumn[type];
+    if (!columnFactory) {
+      throw new Error(`Unsupported column type: ${type}`);
+    }
+
     const column = this.mapColumn[type]();
     column.name = name;
+
     return column;
   }
 }
@@ -59,4 +66,4 @@ class Row {
   }
 }
 
-export default Row;
+export { Row, ColumnFactory };

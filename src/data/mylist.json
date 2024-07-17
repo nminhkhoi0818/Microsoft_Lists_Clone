@@ -1,0 +1,60 @@
+{
+  "lists": [
+    {
+      "id": "0838edc4-0a61-4345-adb9-c36275c6fd2d",
+      "name": "My List",
+      "columns": [
+        {
+          "id": "2dab8f55-5a3f-4a2e-8303-b78f8fc8e89f",
+          "name": "Title",
+          "type": 0,
+          "value": ""
+        },
+        {
+          "id": "37af3e62-6933-4ed0-aa3e-75b0cbb3a043",
+          "name": "Age",
+          "type": 1,
+          "value": 0
+        }
+      ],
+      "rows": [
+        {
+          "id": "4dcd5e35-0dc7-4f9f-b8e5-371cd1c55c99",
+          "columns": [
+            {
+              "id": "c6ca18c6-3f2b-4d0e-aa97-d02f347a658a",
+              "name": "Title",
+              "type": 0,
+              "value": "John Doe"
+            },
+            {
+              "id": "33c517f5-4bf1-4dbb-916d-0d98ae7320b3",
+              "name": "Age",
+              "type": 1,
+              "value": 30
+            }
+          ]
+        },
+        {
+          "id": "6b7e2203-a553-4fbb-b5aa-96617c496bf4",
+          "columns": [
+            {
+              "id": "8067d370-7a96-4fb4-afe7-555ba03dd1e8",
+              "name": "Title",
+              "type": 0,
+              "value": "Jane Doe"
+            },
+            {
+              "id": "7aea3070-08aa-4d5b-a6a3-dc48b01dc1be",
+              "name": "Age",
+              "type": 1,
+              "value": 25
+            }
+          ]
+        }
+      ],
+      "views": [],
+      "forms": []
+    }
+  ]
+}

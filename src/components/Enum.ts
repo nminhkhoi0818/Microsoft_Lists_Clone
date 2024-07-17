@@ -20,4 +20,9 @@ enum EnumViewType {
   Board,
 }
 
-export { EnumColumnType, EnumViewType };
+enum EnumChoiceType {
+  Single,
+  Multiple,
+}
+
+export { EnumColumnType, EnumViewType, EnumChoiceType };

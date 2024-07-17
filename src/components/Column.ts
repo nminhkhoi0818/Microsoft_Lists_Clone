@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { EnumColumnType } from "./Enum";
+import { EnumChoiceType, EnumColumnType } from "./Enum";
 
 abstract class Column {
   id: string;
@@ -85,20 +85,21 @@ class DateColumn extends Column {
 }
 
 class ChoiceColumn extends Column {
-  value: string;
+  value!: string | string[];
+  selectionType: EnumChoiceType;
   options: string[];
 
-  constructor(name: string = "", options: string[] = [], value: string = "") {
+  constructor(name: string, selectionType: EnumChoiceType, options: string[]) {
     super(name, EnumColumnType.Choice);
+    this.selectionType = selectionType;
     this.options = options;
-    this.value = value;
   }
 
   addOption(option: string) {
     this.options.push(option);
   }
 
-  setValue(value: string) {
+  setValue(value: string | string[]) {
     this.value = value;
   }
 
