@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { Column } from "./Column";
 import Form from "./Form";
-import Row from "./Row";
 import { View } from "./View";
+import { Row } from "./Row";
 
 class List {
   id: string;
@@ -32,11 +32,16 @@ class List {
   addRow(...data: any[]) {
     const row: Row = new Row(this.columns);
 
-    data.forEach((value, index) => {
-      row.columns[index].setValue(value);
+    data.forEach((colData) => {
+      Object.keys(colData).forEach((colName) => {
+        row.setValueCol(colName, colData[colName]);
+      });
     });
-
     this.rows.push(row);
+  }
+
+  getColumn(colName: string) {
+    return this.columns.find((col) => col.name === colName);
   }
 
   getRow(index: number) {
@@ -55,6 +60,14 @@ class List {
 
     this.rows.forEach((row) => {
       row.columns = row.columns.filter((col) => col.name !== colName);
+    });
+  }
+
+  searchRows(search: string) {
+    return this.rows.filter((row) => {
+      return row.columns.some((col) => {
+        return col.getValue().toString().includes(search);
+      });
     });
   }
 

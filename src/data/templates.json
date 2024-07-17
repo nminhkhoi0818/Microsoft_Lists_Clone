@@ -3,20 +3,20 @@
     {
       "name": "Template tracker",
       "columns": [
-        { "type": "TextColumn", "name": "Full Name" },
-        { "type": "NumberColumn", "name": "Age" },
-        { "type": "YesNoColumn", "name": "Is Active" }
+        { "type": 0, "name": "Full Name" },
+        { "type": 1, "name": "Age" },
+        { "type": 2, "name": "Is Active" }
       ],
       "description": "A template for tracking people"
     },
     {
       "name": "Task tracker",
       "columns": [
-        { "type": "TextColumn", "name": "Task Name" },
-        { "type": "DateColumn", "name": "Due Date" },
-        { "type": "YesNoColumn", "name": "Completed" },
+        { "type": 0, "name": "Task Name" },
+        { "type": 4, "name": "Due Date" },
+        { "type": 2, "name": "Completed" },
         {
-          "type": "ChoiceColumn",
+          "type": 5,
           "name": "Priority",
           "choices": ["High", "Medium", "Low"]
         }
@@ -26,12 +26,12 @@
     {
       "name": "Project tracker",
       "columns": [
-        { "type": "TextColumn", "name": "Project Name" },
-        { "type": "DateColumn", "name": "Start Date" },
-        { "type": "DateColumn", "name": "End Date" },
-        { "type": "NumberColumn", "name": "Budget" },
+        { "type": 0, "name": "Project Name" },
+        { "type": 4, "name": "Start Date" },
+        { "type": 4, "name": "End Date" },
+        { "type": 1, "name": "Budget" },
         {
-          "type": "ChoiceColumn",
+          "type": 5,
           "name": "Status",
           "choices": ["Pending", "In Progress", "Completed"]
         }
