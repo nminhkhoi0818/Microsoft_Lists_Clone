@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import { Column } from "./Column";
 import Form from "./Form";
-import { View } from "./View";
+import { BoardView, View } from "./View";
 import { Row } from "./Row";
+import { EnumViewType } from "./Enum";
 
 class List {
   id: string;
@@ -71,8 +72,33 @@ class List {
     });
   }
 
-  addView(name: string, view: View) {
-    view.name = name;
+  getPage(pageNum: number, pageSize: number) {
+    const start = (pageNum - 1) * pageSize;
+    const end = start + pageSize;
+    return this.rows.slice(start, end);
+  }
+
+  hideColumn(colName: string) {
+    const col = this.getColumn(colName);
+    col!.isHidden = true;
+  }
+
+  moveLeftColumn(colName: string) {
+    const idx = this.columns.findIndex((col) => col.name === colName);
+    [this.columns[idx - 1], this.columns[idx]] = [
+      this.columns[idx],
+      this.columns[idx - 1],
+    ];
+    this.rows.forEach((row) => {
+      [row.columns[idx - 1], row.columns[idx]] = [
+        row.columns[idx],
+        row.columns[idx - 1],
+      ];
+    });
+  }
+
+  addView(view: View) {
+    view.columns = this.columns;
     this.views.push(view);
   }
 

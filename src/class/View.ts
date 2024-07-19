@@ -6,13 +6,13 @@ abstract class View {
   id: string;
   name: string;
   type: EnumViewType;
-  viewColumns: Column[];
+  columns: Column[];
 
   constructor(name: string, type: EnumViewType) {
     this.id = uuidv4();
     this.name = name;
     this.type = type;
-    this.viewColumns = [];
+    this.columns = [];
   }
 }
 
@@ -35,8 +35,11 @@ class GalleryView extends View {
 }
 
 class BoardView extends View {
-  constructor(name: string) {
+  choiceColumn: string;
+
+  constructor(name: string, choiceColumn: string) {
     super(name, EnumViewType.Board);
+    this.choiceColumn = choiceColumn;
   }
 }
 

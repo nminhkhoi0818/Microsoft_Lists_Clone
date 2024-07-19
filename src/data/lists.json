@@ -1,0 +1,96 @@
+{
+  "lists": [
+    {
+      "id": "78bf90ea-2b99-4e26-9b36-7349a4eba12d",
+      "name": "My List",
+      "columns": [
+        {
+          "id": "651cadba-686c-41d6-9499-ea0d298e4bcf",
+          "name": "Title",
+          "type": 0,
+          "isHidden": false,
+          "value": ""
+        },
+        {
+          "id": "8b28fff6-aeeb-4c6b-a764-181f309381e3",
+          "name": "Age",
+          "type": 1,
+          "isHidden": false,
+          "value": 0
+        },
+        {
+          "id": "73df0a7d-809a-4e47-aa1e-2f43751424dc",
+          "name": "Gender",
+          "type": 5,
+          "isHidden": false,
+          "selectionType": 0,
+          "options": [
+            "Male",
+            "Female",
+            "Other"
+          ]
+        }
+      ],
+      "rows": [
+        {
+          "id": "1164c8d0-7b9b-4a07-b04a-cc3b64f7b32e",
+          "columns": [
+            {
+              "id": "5754605e-6c12-4a75-9598-fafe610febae",
+              "name": "Title",
+              "type": 0,
+              "isHidden": false,
+              "value": "John Doe"
+            },
+            {
+              "id": "e0efd648-3671-491c-a698-41ea32291c69",
+              "name": "Age",
+              "type": 1,
+              "isHidden": false,
+              "value": 30
+            },
+            {
+              "id": "b7fd073e-10bb-403d-a2f6-2754116aff19",
+              "name": "Gender",
+              "type": 5,
+              "isHidden": false,
+              "selectionType": 0,
+              "options": [],
+              "value": "Male"
+            }
+          ]
+        },
+        {
+          "id": "c4ddeae1-8c06-44af-af6e-d5ea47320136",
+          "columns": [
+            {
+              "id": "6a903ecb-67ff-42ea-8a9f-5951e854d608",
+              "name": "Title",
+              "type": 0,
+              "isHidden": false,
+              "value": "Jane Doe"
+            },
+            {
+              "id": "1eda2123-23ce-4be7-8b8c-d4cb95d5cf45",
+              "name": "Age",
+              "type": 1,
+              "isHidden": false,
+              "value": 25
+            },
+            {
+              "id": "7cf8d7b3-fcd7-4bc6-9d96-bcf34b5da7f5",
+              "name": "Gender",
+              "type": 5,
+              "isHidden": false,
+              "selectionType": 0,
+              "options": [],
+              "value": "Female"
+            }
+          ]
+        }
+      ],
+      "views": [],
+      "forms": []
+    }
+  ]
+}
