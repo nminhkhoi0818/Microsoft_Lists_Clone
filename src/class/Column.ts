@@ -5,11 +5,13 @@ abstract class Column {
   id: string;
   name: string;
   type: EnumColumnType;
+  isHidden: boolean;
 
   constructor(name: string, type: EnumColumnType) {
     this.id = uuidv4();
     this.name = name;
     this.type = type;
+    this.isHidden = false;
   }
 
   abstract setValue(value: any): void;

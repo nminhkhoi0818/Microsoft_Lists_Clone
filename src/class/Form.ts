@@ -12,14 +12,14 @@ class Form {
     this.columns = columns;
   }
 
-  addField(column: Column) {
+  addColumn(column: Column) {
     if (this.columns.find((field) => field.name === column.name)) {
-      throw new Error("Field name already exists");
+      throw new Error("Column name already exists");
     }
     this.columns.push(column);
   }
 
-  hideField(colName: string) {
+  hideColumn(colName: string) {
     this.columns = this.columns.filter((field) => field.name !== colName);
   }
 }
