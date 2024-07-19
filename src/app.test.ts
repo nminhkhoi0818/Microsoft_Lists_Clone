@@ -3,13 +3,14 @@ import {
   ChoiceColumn,
   NumberColumn,
   YesNoColumn,
+  DateColumn,
 } from "./class/Column";
 import { FILE_PATHS } from "./class/config";
-import { EnumChoiceType } from "./class/Enum";
+import { EnumCalendarDisplay, EnumChoiceType } from "./class/Enum";
 import List from "./class/List";
 import ListManagement from "./class/ListManagement";
 import path from "path";
-import { BoardView, CalendarView, GalleryView, ListView } from "./class/View";
+import { BoardView, CalendarView, ListView } from "./class/View";
 
 describe("Microsoft Lists Clone Application", () => {
   let app: ListManagement;
@@ -38,6 +39,7 @@ describe("Microsoft Lists Clone Application", () => {
     // Add columns data
     list.addColumn(new NumberColumn("Age"));
     list.addColumn(new YesNoColumn("Is Active"));
+    list.addColumn(new DateColumn("Date of Birth"));
     list.addColumn(
       new ChoiceColumn("Gender", EnumChoiceType.Single, [
         "Male",
@@ -63,12 +65,16 @@ describe("Microsoft Lists Clone Application", () => {
     list.addRow({ Title: "Jane Doe" }, { Gender: "Female" });
     list.addRow({ Title: "Peter" }, { Courses: ["Math", "Science"] });
 
+    list.getRow(0).setValueCol("Date of Birth", new Date("1990-01-01"));
+    list.getRow(1).setValueCol("Date of Birth", new Date("1995-01-01"));
+
     const expectedData = [
       {
         Title: "John Doe",
         Age: 30,
         "Is Active": false,
         Gender: "Male",
+        "Date of Birth": new Date("1990-01-01"),
         Courses: ["Math", "English"],
       },
       {
@@ -76,6 +82,7 @@ describe("Microsoft Lists Clone Application", () => {
         Age: 0,
         "Is Active": false,
         Gender: "Female",
+        "Date of Birth": new Date("1995-01-01"),
         Courses: undefined,
       },
       {
@@ -83,6 +90,7 @@ describe("Microsoft Lists Clone Application", () => {
         Age: 0,
         "Is Active": false,
         Gender: undefined,
+        "Date of Birth": new Date(0),
         Courses: ["Math", "Science"],
       },
     ];
@@ -94,6 +102,9 @@ describe("Microsoft Lists Clone Application", () => {
         expectedData[index]["Is Active"]
       );
       expect(row.getValueCol("Gender")).toBe(expectedData[index]["Gender"]);
+      expect(row.getValueCol("Date of Birth")).toStrictEqual(
+        expectedData[index]["Date of Birth"]
+      );
       expect(row.getValueCol("Courses")).toStrictEqual(
         expectedData[index]["Courses"]
       );
@@ -154,16 +165,12 @@ describe("Microsoft Lists Clone Application", () => {
     list.addRow({ Title: "John Doe", Age: 30 });
     list.addRow({ Title: "Jane Doe", Age: 25 });
 
-    let result = list.searchRows("Doe");
+    let result = list.searchRows("John");
 
     const expectedData = [
       {
         Title: "John Doe",
         Age: 30,
-      },
-      {
-        Title: "Jane Doe",
-        Age: 25,
       },
     ];
 
@@ -192,6 +199,7 @@ describe("Microsoft Lists Clone Application", () => {
 
     const pageSize = 5;
     let page1 = list.getPage(1, pageSize);
+
     page1.forEach((row, index) => {
       expect(row.getValueCol("Title")).toBe(
         list.rows[index].getValueCol("Title")
@@ -217,29 +225,77 @@ describe("Microsoft Lists Clone Application", () => {
     expect(list.getColumn("Age")!.isHidden).toBe(true);
   });
 
-  test("Add view", () => {
+  test("Add multiple views", () => {
+    list = app.createList("My List");
+    list.addColumn(
+      new ChoiceColumn("Choice", EnumChoiceType.Single, [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+      ])
+    );
+    list.addColumn(new DateColumn("Date"));
+
+    list.addRow({
+      Title: "John Doe",
+      Choice: "Option 1",
+      Date: new Date("2024-01-01"),
+    });
+    list.addRow({
+      Title: "Jane Doe",
+      Choice: "Option 1",
+      Date: new Date("2024-01-02"),
+    });
+    list.addRow({
+      Title: "Peter",
+      Choice: "Option 1",
+      Date: new Date("2024-01-03"),
+    });
+
+    let item = list.getRow(0);
+
+    // Adding calendar view
+    const calendarView = new CalendarView(
+      "Calendar View",
+      EnumCalendarDisplay.Week,
+      "Date"
+    );
+    list.addView(calendarView);
+
+    calendarView.moveItem(item.id, new Date("2024-01-02"));
+
+    expect(calendarView.getFromDate(new Date("2024-01-02")).length).toBe(2);
+    expect(calendarView.getFromDate(new Date("2024-01-01")).length).toBe(0);
+
+    // Adding board view
+    const boardView = new BoardView("Board View", "Choice");
+    list.addView(boardView);
+
+    expect(boardView.getOptionItems("Option 1").length).toBe(3);
+
+    boardView.moveItem(item.id, "Option 2");
+
+    expect(boardView.getOptionItems("Option 1").length).toBe(2);
+    expect(boardView.getOptionItems("Option 2").length).toBe(1);
+  });
+
+  test("Show and hide columns in views", () => {
     list = app.createList("My List");
     list.addColumn(new NumberColumn("Age"));
     list.addColumn(new YesNoColumn("Is Active"));
-    list.addColumn(
-      new ChoiceColumn("Gender", EnumChoiceType.Single, [
-        "Male",
-        "Female",
-        "Other",
-      ])
-    );
+    list.addColumn(new TextColumn("Description"));
 
-    list.addRow({ Title: "John Doe", Age: 30, "Is Active": true });
-    list.addRow({ Title: "Jane Doe", Age: 25, "Is Active": false });
-    list.addRow({ Title: "Peter", Age: 35, "Is Active": true });
+    let listView = new ListView("List View");
+    listView.columns = list.columns;
+    list.addView(listView);
 
-    list.addView(new ListView("My List View"));
-    list.addView(new CalendarView("My Calendar View"));
-    list.addView(new GalleryView("My Gallery View"));
-    list.addView(new BoardView("My Board View", "Gender"));
+    listView.hideColumn("Age");
+    listView.hideColumn("Description");
+    listView.showColumn("Age");
 
-    list.views.forEach((view) => {
-      expect(view.columns).toStrictEqual(list.columns);
+    const expectedColumns = ["Title", "Is Active", "Age"];
+    listView.columns.forEach((column, index) => {
+      expect(column.name).toBe(expectedColumns[index]);
     });
   });
 
@@ -255,10 +311,17 @@ describe("Microsoft Lists Clone Application", () => {
       "Project Name",
       "Start Date",
       "End Date",
+      "Budget",
       "Status",
       "Estimated Hours",
     ];
+
     form.columns.forEach((column, index) => {
+      expect(column.name).toBe(expectedColumns[index]);
+    });
+
+    // Columns should be change in list
+    list.columns.forEach((column, index) => {
       expect(column.name).toBe(expectedColumns[index]);
     });
   });

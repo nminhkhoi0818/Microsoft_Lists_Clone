@@ -14,7 +14,7 @@ class ColumnFactory {
     [EnumColumnType.Text]: () => new TextColumn("", ""),
     [EnumColumnType.Number]: () => new NumberColumn("", 0),
     [EnumColumnType.YesNo]: () => new YesNoColumn("", false),
-    [EnumColumnType.Date]: () => new DateColumn("", new Date()),
+    [EnumColumnType.Date]: () => new DateColumn("", new Date(0)),
     [EnumColumnType.Choice]: () =>
       new ChoiceColumn("", EnumChoiceType.Single, []),
     [EnumColumnType.Hyperlink]: () => new TextColumn("", ""),
