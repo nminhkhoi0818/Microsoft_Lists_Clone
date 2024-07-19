@@ -20,9 +20,15 @@ enum EnumViewType {
   Board,
 }
 
+enum EnumCalendarDisplay {
+  Day,
+  Week,
+  Month,
+}
+
 enum EnumChoiceType {
   Single,
   Multiple,
 }
 
-export { EnumColumnType, EnumViewType, EnumChoiceType };
+export { EnumColumnType, EnumViewType, EnumChoiceType, EnumCalendarDisplay };

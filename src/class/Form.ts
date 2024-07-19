@@ -20,7 +20,8 @@ class Form {
   }
 
   hideColumn(colName: string) {
-    this.columns = this.columns.filter((field) => field.name !== colName);
+    let column = this.columns.find((field) => field.name === colName);
+    column!.isHidden = true;
   }
 }
 

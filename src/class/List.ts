@@ -99,7 +99,13 @@ class List {
 
   addView(view: View) {
     view.columns = this.columns;
+    view.rows = this.rows;
     this.views.push(view);
+    return view;
+  }
+
+  getViews(viewName: string) {
+    return this.views.filter((view) => view.name === viewName);
   }
 
   createForm(name: string) {
