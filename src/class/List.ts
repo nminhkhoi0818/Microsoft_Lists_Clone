@@ -1,9 +1,8 @@
 import { v4 as uuidv4 } from "uuid";
 import { Column } from "./Column";
 import Form from "./Form";
-import { BoardView, View } from "./View";
+import { View } from "./View";
 import { Row } from "./Row";
-import { EnumViewType } from "./Enum";
 
 class List {
   id: string;
@@ -97,6 +96,31 @@ class List {
     });
   }
 
+  sortAsc(colName: string) {
+    this.rows.sort((a, b) => {
+      return a.getValueCol(colName) > b.getValueCol(colName) ? 1 : -1;
+    });
+  }
+
+  sortDesc(colName: string) {
+    this.rows.sort((a, b) => {
+      return a.getValueCol(colName) < b.getValueCol(colName) ? 1 : -1;
+    });
+  }
+
+  groupBy(colName: string) {
+    const groups: any = {};
+    this.rows.forEach((row) => {
+      const key = row.getValueCol(colName);
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(row);
+    });
+
+    return groups;
+  }
+
   addView(view: View) {
     view.columns = this.columns;
     view.rows = this.rows;
@@ -109,7 +133,7 @@ class List {
   }
 
   createForm(name: string) {
-    const form = new Form(name, this.columns);
+    const form = new Form(name, this.columns, this.rows);
     this.forms.push(form);
     return form;
   }

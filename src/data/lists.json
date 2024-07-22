@@ -1,25 +1,25 @@
 {
   "lists": [
     {
-      "id": "2cee85ff-860f-492c-abf5-f01cd2ef7d2e",
+      "id": "720fccc7-4c92-4ec4-8c54-99b18fa70a23",
       "name": "My List",
       "columns": [
         {
-          "id": "1afd85b5-7f3f-4513-b1cc-885d3853dbc9",
+          "id": "098051f9-74c7-4ad6-8a78-e327f474f7a1",
           "name": "Title",
           "type": 0,
           "isHidden": false,
           "value": ""
         },
         {
-          "id": "6195f444-4e49-460b-b911-5a3013be7dc0",
+          "id": "c9ffecb8-f810-462b-8453-c2d71337a9ba",
           "name": "Age",
           "type": 1,
           "isHidden": false,
           "value": 0
         },
         {
-          "id": "5650544c-81ec-4d31-9798-0b02a2ef3cd2",
+          "id": "5ca6ce71-ae93-4684-b836-6cbfc7fa274a",
           "name": "Gender",
           "type": 5,
           "isHidden": false,
@@ -33,57 +33,65 @@
       ],
       "rows": [
         {
-          "id": "4ea80c4b-71cc-4dc3-8f56-12db94a65367",
+          "id": "7380856a-a87d-4611-b258-47bccc44535f",
           "columns": [
             {
-              "id": "be3222c4-d6a4-4670-8289-ff712046c826",
+              "id": "550a3b91-ed07-4436-bee3-f79f92cdc854",
               "name": "Title",
               "type": 0,
               "isHidden": false,
               "value": "John Doe"
             },
             {
-              "id": "7f0f5327-203a-4fa7-b216-6ed6d3eeb1e3",
+              "id": "b4338704-fdc3-4b0a-bb64-e4ba54572cd8",
               "name": "Age",
               "type": 1,
               "isHidden": false,
               "value": 30
             },
             {
-              "id": "3df10946-c194-44be-912a-3c8b88284382",
+              "id": "d369c44d-bafd-4544-bc50-2ee4fd075c1e",
               "name": "Gender",
               "type": 5,
               "isHidden": false,
               "selectionType": 0,
-              "options": [],
+              "options": [
+                "Male",
+                "Female",
+                "Other"
+              ],
               "value": "Male"
             }
           ]
         },
         {
-          "id": "c9190b34-633f-4fc0-8393-52ae7f773377",
+          "id": "9de4f566-7858-418a-a7ff-ec6c5f46ce44",
           "columns": [
             {
-              "id": "d6e2fcd9-65fd-4b2b-b10e-0359cefb5306",
+              "id": "9a1a84f9-5b39-4e34-bef6-270cc049ca32",
               "name": "Title",
               "type": 0,
               "isHidden": false,
               "value": "Jane Doe"
             },
             {
-              "id": "817ced0f-acc4-4aa8-8f14-1f464f38d36d",
+              "id": "8805a6e1-391d-428c-a8d6-697aa63a52e3",
               "name": "Age",
               "type": 1,
               "isHidden": false,
               "value": 25
             },
             {
-              "id": "ebdec56e-6b2a-4346-bc69-9799ff09b68b",
+              "id": "f013504b-800c-4a75-bb43-b78cdb9f8dde",
               "name": "Gender",
               "type": 5,
               "isHidden": false,
               "selectionType": 0,
-              "options": [],
+              "options": [
+                "Male",
+                "Female",
+                "Other"
+              ],
               "value": "Female"
             }
           ]

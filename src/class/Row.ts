@@ -45,6 +45,14 @@ class Row {
   constructor(columns: Column[]) {
     this.id = uuidv4();
     this.columns = columns.map((column) => {
+      if (column.type === EnumColumnType.Choice) {
+        let choiceColumn = column as ChoiceColumn;
+        return new ChoiceColumn(
+          choiceColumn.name,
+          choiceColumn.selectionType,
+          choiceColumn.options
+        );
+      }
       return ColumnFactory.createColumn(column.type, column.name);
     });
   }

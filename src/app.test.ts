@@ -33,7 +33,7 @@ describe("Microsoft Lists Clone Application", () => {
     });
   });
 
-  test("Add new columns, insert data and delete columns", () => {
+  test("Add new columns, insert data", () => {
     let list = app.createList("My List");
 
     // Add columns data
@@ -214,8 +214,34 @@ describe("Microsoft Lists Clone Application", () => {
     list.addColumn(new YesNoColumn("Is Active"));
     list.addColumn(new TextColumn("Description"));
 
+    list.addRow({ Title: "John Doe", Age: 30, "Is Active": true });
+    list.addRow({ Title: "Jane Doe", Age: 25, "Is Active": false });
+    list.addRow({ Title: "Peter", Age: 35, "Is Active": true });
+
     list.moveLeftColumn("Is Active");
     list.hideColumn("Age");
+
+    list.sortAsc("Age");
+    let groupData = list.groupBy("Is Active");
+
+    const expectedData = {
+      true: [
+        { Title: "John Doe", Age: 30, "Is Active": true },
+        { Title: "Peter", Age: 35, "Is Active": true },
+      ],
+      false: [{ Title: "Jane Doe", Age: 25, "Is Active": false }],
+    };
+
+    const checkGroup = (group, expected) => {
+      group.forEach((row, index) => {
+        expect(row.getValueCol("Title")).toBe(expected[index].Title);
+        expect(row.getValueCol("Age")).toBe(expected[index].Age);
+        expect(row.getValueCol("Is Active")).toBe(expected[index]["Is Active"]);
+      });
+    };
+
+    checkGroup(groupData["true"], expectedData["true"]);
+    checkGroup(groupData["false"], expectedData["false"]);
 
     const expectedColumns = ["Title", "Is Active", "Age", "Description"];
 
@@ -324,11 +350,40 @@ describe("Microsoft Lists Clone Application", () => {
     list.columns.forEach((column, index) => {
       expect(column.name).toBe(expectedColumns[index]);
     });
+
+    const formData = {
+      "Project Name": "Project A",
+      "Start Date": new Date("2023-01-01"),
+      "End Date": new Date("2023-12-31"),
+      Budget: 10000,
+      Status: "In Progress",
+      "Estimated Hours": 150,
+    };
+
+    form.submit(formData);
+
+    list.rows.forEach((row) => {
+      Object.keys(formData).forEach((colName) => {
+        expect(row.getValueCol(colName)).toStrictEqual(formData[colName]);
+      });
+    });
   });
 
-  test("Delete a list", () => {
+  test("Delete columns, and list", () => {
     app.createList("My List");
-    app.deleteList(app.lists[0].id);
-    expect(app.lists.length).toBe(0);
+    list.addColumn(new NumberColumn("Age"));
+    list.addColumn(new YesNoColumn("Is Active"));
+
+    list.addRow({ Title: "John Doe", Age: 30, "Is Active": true });
+    list.addRow({ Title: "Jane Doe", Age: 25, "Is Active": false });
+
+    list.deleteColumn("Age");
+
+    list.rows.forEach((row) => {
+      expect(row.getValueCol("Age")).toBe(undefined);
+    });
+
+    app.deleteList("My List");
+    expect(app.getList("My List")).toBe(undefined);
   });
 });
