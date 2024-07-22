@@ -1,4 +1,4 @@
-import { TextColumn } from "./Column";
+import { ChoiceColumn, Column, TextColumn } from "./Column";
 import List from "./List";
 import { ColumnFactory, Row } from "./Row";
 import Template from "./Template";
@@ -61,7 +61,25 @@ class ListManagement {
 
   saveLists(filePath: string) {
     const data = {
-      lists: this.lists,
+      lists: this.lists.map((list) => {
+        return {
+          name: list.name,
+          columns: list.columns.map((column) => {
+            return this.serializeColumn(column);
+          }),
+          rows: list.rows.map((row) => {
+            return {
+              columns: row.columns.map((column) => {
+                return {
+                  type: column.type,
+                  name: column.name,
+                  value: column.getValue(),
+                };
+              }),
+            };
+          }),
+        };
+      }),
     };
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   }
@@ -91,6 +109,17 @@ class ListManagement {
       });
       this.lists.push(newList);
     });
+  }
+
+  serializeColumn(column: Column) {
+    const serialized: any = {
+      type: column.type,
+      name: column.name,
+    };
+    if (column instanceof ChoiceColumn) {
+      serialized.options = column.options;
+    }
+    return serialized;
   }
 
   deleteList(listName: string) {
