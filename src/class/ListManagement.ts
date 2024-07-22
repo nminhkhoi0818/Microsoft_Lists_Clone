@@ -93,8 +93,8 @@ class ListManagement {
     });
   }
 
-  deleteList(listId: string) {
-    this.lists = this.lists.filter((list) => list.id !== listId);
+  deleteList(listName: string) {
+    this.lists = this.lists.filter((list) => list.name !== listName);
   }
 
   getList(listName: string) {

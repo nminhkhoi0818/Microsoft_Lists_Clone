@@ -102,6 +102,12 @@ class ChoiceColumn extends Column {
   }
 
   setValue(value: string | string[]) {
+    if (Array.isArray(value)) {
+      let valueOption = this.options.filter((option) => {
+        return value.includes(option);
+      });
+      this.value = valueOption;
+    }
     this.value = value;
   }
 
