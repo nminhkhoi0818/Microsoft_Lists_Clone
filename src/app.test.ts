@@ -146,15 +146,12 @@ describe("Microsoft Lists Clone Application", () => {
       },
     ];
 
-    const list = app.getList("My List")!;
+    const list = app.getList("My List");
 
-    list.columns.forEach((column, index) => {
-      expect(column.name).toBe(Object.keys(expectedData[0])[index]);
-    });
-
-    list.rows.forEach((row, index) => {
+    list!.rows.forEach((row, index) => {
       expect(row.getValueCol("Title")).toBe(expectedData[index].Title);
       expect(row.getValueCol("Age")).toBe(expectedData[index].Age);
+      expect(row.getValueCol("Gender")).toBe(expectedData[index].Gender);
     });
   });
 
