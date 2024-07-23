@@ -11,15 +11,18 @@ import List from "./class/List";
 import ListManagement from "./class/ListManagement";
 import path from "path";
 import { BoardView, CalendarView, ListView } from "./class/View";
+import { Organization, User } from "./class/User";
 
 describe("Microsoft Lists Clone Application", () => {
   let app: ListManagement;
   let list: List;
+  let user: User;
 
   beforeEach(() => {
     app = new ListManagement();
     const filePath = path.resolve(__dirname, FILE_PATHS.TEMPLATES);
     app.loadTemplates(filePath);
+    user = app.addUser(new User("John Doe", "john@example.com"));
   });
 
   test("Add list from template", () => {
@@ -34,7 +37,7 @@ describe("Microsoft Lists Clone Application", () => {
   });
 
   test("Add new columns, insert data", () => {
-    let list = app.createList("My List");
+    let list = app.createList("My List", user);
 
     // Add columns data
     list.addColumn(new NumberColumn("Age"));
@@ -112,7 +115,7 @@ describe("Microsoft Lists Clone Application", () => {
   });
 
   test("Save lists file", () => {
-    let list = app.createList("My List");
+    let list = app.createList("My List", user);
     list.addColumn(new NumberColumn("Age"));
     list.addColumn(
       new ChoiceColumn("Gender", EnumChoiceType.Single, [
@@ -156,7 +159,7 @@ describe("Microsoft Lists Clone Application", () => {
   });
 
   test("Search key word", () => {
-    let list = app.createList("My List");
+    let list = app.createList("My List", user);
     list.addColumn(new NumberColumn("Age"));
 
     list.addRow({ Title: "John Doe", Age: 30 });
@@ -178,7 +181,7 @@ describe("Microsoft Lists Clone Application", () => {
   });
 
   test("Paging rows data", () => {
-    list = app.createList("My List");
+    list = app.createList("My List", user);
     list.addColumn(new NumberColumn("Age"));
     list.addColumn(new YesNoColumn("Is Active"));
 
@@ -206,7 +209,7 @@ describe("Microsoft Lists Clone Application", () => {
   });
 
   test("Column settings", () => {
-    list = app.createList("My List");
+    list = app.createList("My List", user);
     list.addColumn(new NumberColumn("Age"));
     list.addColumn(new YesNoColumn("Is Active"));
     list.addColumn(new TextColumn("Description"));
@@ -249,7 +252,7 @@ describe("Microsoft Lists Clone Application", () => {
   });
 
   test("Add multiple views", () => {
-    list = app.createList("My List");
+    list = app.createList("My List", user);
     list.addColumn(
       new ChoiceColumn("Choice", EnumChoiceType.Single, [
         "Option 1",
@@ -303,7 +306,7 @@ describe("Microsoft Lists Clone Application", () => {
   });
 
   test("Show and hide columns in views", () => {
-    list = app.createList("My List");
+    list = app.createList("My List", user);
     list.addColumn(new NumberColumn("Age"));
     list.addColumn(new YesNoColumn("Is Active"));
     list.addColumn(new TextColumn("Description"));
@@ -367,7 +370,7 @@ describe("Microsoft Lists Clone Application", () => {
   });
 
   test("Delete columns, and list", () => {
-    app.createList("My List");
+    app.createList("My List", user);
     list.addColumn(new NumberColumn("Age"));
     list.addColumn(new YesNoColumn("Is Active"));
 
@@ -382,5 +385,37 @@ describe("Microsoft Lists Clone Application", () => {
 
     app.deleteList("My List");
     expect(app.getList("My List")).toBe(undefined);
+  });
+
+  test("Add column with the same name", () => {
+    let list = app.createList("My List", user);
+    list.addColumn(new NumberColumn("Age"));
+    list.addColumn(new NumberColumn("Age"));
+
+    expect(list.columns.length).toBe(2);
+  });
+
+  test("Add user to organization", () => {
+    const user = app.addUser(new User("John Doe", "john@example.com"));
+    const org = app.addOrg(new Organization("My Organization"));
+    org.addUser(user.id);
+
+    expect(org.users.length).toBe(1);
+  });
+
+  test("User add list", () => {
+    const user = app.addUser(new User("John Doe", "john@example.com"));
+    user.createList("My List");
+
+    expect(user.lists.length).toBe(1);
+  });
+
+  test("User add item to list", () => {
+    const user = app.addUser(new User("John Doe", "john@example.com"));
+    const list = user.createList("My List");
+
+    list.addRow({ Title: "Task 1" });
+
+    expect(list.rows.length).toBe(1);
   });
 });

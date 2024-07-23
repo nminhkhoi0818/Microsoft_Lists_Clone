@@ -3,27 +3,24 @@ import List from "./List";
 import { ColumnFactory, Row } from "./Row";
 import Template from "./Template";
 import fs from "fs";
+import { Organization, User } from "./User";
 
 class ListManagement {
   lists: List[];
   templates: Template[];
+  users: User[];
+  organizations: Organization[];
 
   constructor() {
     this.lists = [];
     this.templates = [];
+    this.users = [];
+    this.organizations = [];
   }
 
-  createList(name: string) {
-    const existingList = this.lists.find((list) => list.name === name);
-    if (existingList) {
-      throw new Error("List with the same name already exists");
-    }
-
-    let newList = new List(name);
-    // Add default column
-    newList.addColumn(new TextColumn("Title"));
-    this.lists.push(newList);
-    return newList;
+  createList(name: string, user: User): List {
+    const list = user.createList(name);
+    return list;
   }
 
   createFromTemplate(name: string, templateId: string) {
@@ -132,6 +129,16 @@ class ListManagement {
 
   getTemplate(templateName: string) {
     return this.templates.find((template) => template.name === templateName);
+  }
+
+  addUser(user: User) {
+    this.users.push(user);
+    return user;
+  }
+
+  addOrg(org: Organization) {
+    this.organizations.push(org);
+    return org;
   }
 }
 

@@ -22,6 +22,11 @@ class List {
   }
 
   addColumn(column: Column) {
+    const existingColumn = this.columns.find((col) => col.name === column.name);
+    if (existingColumn) {
+      return;
+    }
+
     this.columns.push(column);
 
     this.rows.forEach((row) => {
