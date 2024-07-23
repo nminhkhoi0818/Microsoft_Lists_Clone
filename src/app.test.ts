@@ -125,6 +125,13 @@ describe("Microsoft Lists Clone Application", () => {
     list.addRow({ Title: "John Doe", Age: 30, Gender: "Male" });
     list.addRow({ Title: "Jane Doe", Age: 25, Gender: "Female" });
 
+    let list2 = app.createList("My List 2");
+    list2.addColumn(new NumberColumn("Age"));
+    list2.addColumn(new YesNoColumn("Is Active"));
+
+    list2.addRow({ Title: "Peter", Age: 35, "Is Active": true });
+    list2.addRow({ Title: "Mary", Age: 40, "Is Active": false });
+
     const filePath = path.resolve(__dirname, FILE_PATHS.LISTS);
     app.saveLists(filePath);
   });
@@ -132,6 +139,9 @@ describe("Microsoft Lists Clone Application", () => {
   test("Load lists file", () => {
     const filePath = path.resolve(__dirname, FILE_PATHS.LISTS);
     app.loadLists(filePath);
+
+    const list = app.getList("My List");
+    const list2 = app.getList("My List 2");
 
     const expectedData = [
       {
@@ -146,12 +156,31 @@ describe("Microsoft Lists Clone Application", () => {
       },
     ];
 
-    const list = app.getList("My List");
+    const expectedData2 = [
+      {
+        Title: "Peter",
+        Age: 35,
+        "Is Active": true,
+      },
+      {
+        Title: "Mary",
+        Age: 40,
+        "Is Active": false,
+      },
+    ];
 
-    list!.rows.forEach((row, index) => {
+    list?.rows.forEach((row, index) => {
       expect(row.getValueCol("Title")).toBe(expectedData[index].Title);
       expect(row.getValueCol("Age")).toBe(expectedData[index].Age);
       expect(row.getValueCol("Gender")).toBe(expectedData[index].Gender);
+    });
+
+    list2?.rows.forEach((row, index) => {
+      expect(row.getValueCol("Title")).toBe(expectedData2[index].Title);
+      expect(row.getValueCol("Age")).toBe(expectedData2[index].Age);
+      expect(row.getValueCol("Is Active")).toBe(
+        expectedData2[index]["Is Active"]
+      );
     });
   });
 
@@ -162,7 +191,7 @@ describe("Microsoft Lists Clone Application", () => {
     list.addRow({ Title: "John Doe", Age: 30 });
     list.addRow({ Title: "Jane Doe", Age: 25 });
 
-    let result = list.searchRows("John");
+    let result = list.search("John");
 
     const expectedData = [
       {
@@ -195,14 +224,15 @@ describe("Microsoft Lists Clone Application", () => {
     list.addRow({ Title: "Adam", Age: 70, "Is Active": false });
 
     const pageSize = 5;
-    let page1 = list.getPage(1, pageSize);
+    let pageCount = list.getPageCount(pageSize);
 
-    page1.forEach((row, index) => {
-      expect(row.getValueCol("Title")).toBe(
-        list.rows[index].getValueCol("Title")
-      );
-      expect(row.getValueCol("Age")).toBe(list.rows[index].getValueCol("Age"));
-    });
+    expect(pageCount).toBe(2);
+
+    let page1 = list.getPage(1, pageSize);
+    let page2 = list.getPage(2, pageSize);
+
+    expect(page1.length).toBe(5);
+    expect(page2.length).toBe(5);
   });
 
   test("Column settings", () => {

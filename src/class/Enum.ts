@@ -1,16 +1,16 @@
 enum EnumColumnType {
-  Text,
-  Number,
-  YesNo,
-  Person,
-  Date,
-  Choice,
-  Hyperlink,
-  Currency,
-  Location,
-  Image,
-  ManagedMetadata,
-  Lookup,
+  Text = "Text",
+  Number = "Number",
+  YesNo = "Yes/No",
+  Person = "Person",
+  Date = "Date",
+  Choice = "Choice",
+  Hyperlink = "Hyperlink",
+  Currency = "Currency",
+  Location = "Location",
+  Image = "Image",
+  ManagedMetadata = "Managed Metadata",
+  Lookup = "Lookup",
 }
 
 enum EnumViewType {

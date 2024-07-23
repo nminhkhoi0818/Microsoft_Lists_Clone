@@ -1,19 +1,29 @@
 {
   "lists": [
     {
+      "id": "3240619e-20e2-4916-b121-f8f9377e3bb7",
       "name": "My List",
       "columns": [
         {
-          "type": 0,
-          "name": "Title"
+          "id": "6c70edd0-8f29-4326-8c0b-06f2f63225b5",
+          "name": "Title",
+          "type": "Text",
+          "isHidden": false,
+          "value": ""
         },
         {
-          "type": 1,
-          "name": "Age"
+          "id": "d13e0422-dcf2-4b9f-ac5e-34f8e129caf7",
+          "name": "Age",
+          "type": "Number",
+          "isHidden": false,
+          "value": 0
         },
         {
-          "type": 5,
+          "id": "ebccc0ba-ea5f-4631-b607-369b298d12c0",
           "name": "Gender",
+          "type": "Choice",
+          "isHidden": false,
+          "selectionType": 0,
           "options": [
             "Male",
             "Female",
@@ -23,44 +33,155 @@
       ],
       "rows": [
         {
+          "id": "dc8f563a-61b1-481c-90d6-4f020683db51",
           "columns": [
             {
-              "type": 0,
+              "id": "18ea46d5-1791-45aa-85ba-34903e5436cf",
               "name": "Title",
+              "type": "Text",
+              "isHidden": false,
               "value": "John Doe"
             },
             {
-              "type": 1,
+              "id": "75ee9945-ae6d-4825-8bdf-9eca549afe75",
               "name": "Age",
+              "type": "Number",
+              "isHidden": false,
               "value": 30
             },
             {
-              "type": 5,
+              "id": "7e58d6d7-d85e-4b7a-b79e-3ef47d3737ef",
               "name": "Gender",
+              "type": "Choice",
+              "isHidden": false,
+              "selectionType": 0,
+              "options": [
+                "Male",
+                "Female",
+                "Other"
+              ],
               "value": "Male"
             }
           ]
         },
         {
+          "id": "551d541f-a79f-4894-8f80-a77ae4b62996",
           "columns": [
             {
-              "type": 0,
+              "id": "76c5d9a9-561f-4acb-b06b-d33601be4e32",
               "name": "Title",
+              "type": "Text",
+              "isHidden": false,
               "value": "Jane Doe"
             },
             {
-              "type": 1,
+              "id": "90d9d51f-07b1-4bff-a15c-d2279e29a325",
               "name": "Age",
+              "type": "Number",
+              "isHidden": false,
               "value": 25
             },
             {
-              "type": 5,
+              "id": "1cf6073b-5f15-4af9-8e89-cd34a3bbde34",
               "name": "Gender",
+              "type": "Choice",
+              "isHidden": false,
+              "selectionType": 0,
+              "options": [
+                "Male",
+                "Female",
+                "Other"
+              ],
               "value": "Female"
             }
           ]
         }
-      ]
+      ],
+      "views": [],
+      "forms": []
+    },
+    {
+      "id": "35b1a449-6d9f-4594-b202-480203102912",
+      "name": "My List 2",
+      "columns": [
+        {
+          "id": "f24b8506-4043-4166-9bb4-bb348d1bf73d",
+          "name": "Title",
+          "type": "Text",
+          "isHidden": false,
+          "value": ""
+        },
+        {
+          "id": "c130eb64-4c5d-48e9-aa42-316ea0557eee",
+          "name": "Age",
+          "type": "Number",
+          "isHidden": false,
+          "value": 0
+        },
+        {
+          "id": "076b631d-3ef4-4bae-9619-70f6654f08be",
+          "name": "Is Active",
+          "type": "Yes/No",
+          "isHidden": false,
+          "value": false
+        }
+      ],
+      "rows": [
+        {
+          "id": "7d5834f3-2f9a-435d-bba4-0e3789cf904a",
+          "columns": [
+            {
+              "id": "d23bba9a-5a3e-42e8-8419-c7a0be75a15d",
+              "name": "Title",
+              "type": "Text",
+              "isHidden": false,
+              "value": "Peter"
+            },
+            {
+              "id": "70cc97cc-3405-4135-b2ee-e5172269ae24",
+              "name": "Age",
+              "type": "Number",
+              "isHidden": false,
+              "value": 35
+            },
+            {
+              "id": "b2256372-d1ec-4be9-85d1-c63c9925a32f",
+              "name": "Is Active",
+              "type": "Yes/No",
+              "isHidden": false,
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "361c7d75-4dc3-4c08-ae12-1d3de6a58583",
+          "columns": [
+            {
+              "id": "5d10c949-35f6-4481-9c1d-02be45c70b5e",
+              "name": "Title",
+              "type": "Text",
+              "isHidden": false,
+              "value": "Mary"
+            },
+            {
+              "id": "128ff7e3-bca9-4162-847b-17f34b7217c6",
+              "name": "Age",
+              "type": "Number",
+              "isHidden": false,
+              "value": 40
+            },
+            {
+              "id": "eca79dff-60ef-40fd-9b52-c71320c56173",
+              "name": "Is Active",
+              "type": "Yes/No",
+              "isHidden": false,
+              "value": false
+            }
+          ]
+        }
+      ],
+      "views": [],
+      "forms": []
     }
   ]
 }

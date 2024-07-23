@@ -3,40 +3,94 @@
     {
       "name": "Template tracker",
       "columns": [
-        { "type": 0, "name": "Full Name" },
-        { "type": 1, "name": "Age" },
-        { "type": 2, "name": "Is Active" }
+        { "type": "Text", "name": "Full Name" },
+        { "type": "Number", "name": "Age" },
+        { "type": "Yes/No", "name": "Is Active" }
       ],
-      "description": "A template for tracking people"
+      "description": "A template for tracking people",
+      "rows": [
+        {
+          "columns": [
+            { "type": "Text", "name": "Full Name", "value": "John Doe" },
+            { "type": "Number", "name": "Age", "value": 30 },
+            { "type": "Yes/No", "name": "Is Active", "value": true }
+          ]
+        },
+        {
+          "columns": [
+            { "type": "Text", "name": "Full Name", "value": "Jane Doe" },
+            { "type": "Number", "name": "Age", "value": 25 },
+            { "type": "Yes/No", "name": "Is Active", "value": false }
+          ]
+        }
+      ]
     },
     {
       "name": "Task tracker",
       "columns": [
-        { "type": 0, "name": "Task Name" },
-        { "type": 4, "name": "Due Date" },
-        { "type": 2, "name": "Completed" },
+        { "type": "Text", "name": "Task Name" },
+        { "type": "Date", "name": "Due Date" },
+        { "type": "Yes/No", "name": "Completed" },
         {
-          "type": 5,
+          "type": "Choice",
           "name": "Priority",
           "choices": ["High", "Medium", "Low"]
         }
       ],
-      "description": "A template for tracking tasks"
+      "description": "A template for tracking tasks",
+      "rows": [
+        {
+          "columns": [
+            { "type": "Text", "name": "Task Name", "value": "Task 1" },
+            { "type": "Date", "name": "Due Date", "value": "2021-01-01" },
+            { "type": "Yes/No", "name": "Completed", "value": false },
+            { "type": "Choice", "name": "Priority", "value": "High" }
+          ]
+        },
+        {
+          "columns": [
+            { "type": "Text", "name": "Task Name", "value": "Task 2" },
+            { "type": "Date", "name": "Due Date", "value": "2021-02-01" },
+            { "type": "Yes/No", "name": "Completed", "value": true },
+            { "type": "Choice", "name": "Priority", "value": "Medium" }
+          ]
+        }
+      ]
     },
     {
       "name": "Project tracker",
       "columns": [
-        { "type": 0, "name": "Project Name" },
-        { "type": 4, "name": "Start Date" },
-        { "type": 4, "name": "End Date" },
-        { "type": 1, "name": "Budget" },
+        { "type": "Text", "name": "Project Name" },
+        { "type": "Date", "name": "Start Date" },
+        { "type": "Date", "name": "End Date" },
+        { "type": "Number", "name": "Budget" },
         {
-          "type": 5,
+          "type": "Choice",
           "name": "Status",
           "choices": ["Pending", "In Progress", "Completed"]
         }
       ],
-      "description": "A template for tracking projects"
+      "description": "A template for tracking projects",
+      "rows": [
+        {
+          "columns": [
+            { "type": "Text", "name": "Project Name", "value": "Project 1" },
+            { "type": "Date", "name": "Start Date", "value": "2021-01-01" },
+            { "type": "Date", "name": "End Date", "value": "2021-03-01" },
+            { "type": "Number", "name": "Budget", "value": 10000 },
+            { "type": "Choice", "name": "Status", "value": "In Progress" }
+          ]
+        },
+        {
+          "columns": [
+            { "type": "Text", "name": "Project Name", "value": "Project 2" },
+            { "type": "Date", "name": "Start Date", "value": "2021-02-01" },
+            { "type": "Date", "name": "End Date", "value": "2021-04-01" },
+            { "type": "Number", "name": "Budget", "value": 20000 },
+            { "type": "Choice", "name": "Status", "value": "Pending" }
+          ]
+        }
+      ]
     }
   ]
 }

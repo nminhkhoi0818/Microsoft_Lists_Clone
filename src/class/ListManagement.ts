@@ -14,11 +14,6 @@ class ListManagement {
   }
 
   createList(name: string) {
-    const existingList = this.lists.find((list) => list.name === name);
-    if (existingList) {
-      throw new Error("List with the same name already exists");
-    }
-
     let newList = new List(name);
     // Add default column
     newList.addColumn(new TextColumn("Title"));
@@ -27,11 +22,6 @@ class ListManagement {
   }
 
   createFromTemplate(name: string, templateId: string) {
-    const existingList = this.lists.find((list) => list.name === name);
-    if (existingList) {
-      throw new Error("List with the same name already exists");
-    }
-
     let template = this.templates.find(
       (template) => template.id === templateId
     );
@@ -45,15 +35,14 @@ class ListManagement {
     const jsonData = fs.readFileSync(filePath, "utf-8");
     const data = JSON.parse(jsonData);
 
-    data.templates.forEach((template: any) => {
-      const columns = template.columns.map((columnData: any) => {
-        return ColumnFactory.createColumn(columnData.type, columnData.name);
-      });
-
+    data.templates.forEach((item: any) => {
       const newTemplate = new Template(
-        template.name,
-        columns,
-        template.description
+        item.name,
+        item.columns.map((columnData: any) => {
+          return ColumnFactory.createColumn(columnData.type, columnData.name);
+        }),
+        item.description,
+        item.rows
       );
       this.templates.push(newTemplate);
     });
@@ -61,25 +50,7 @@ class ListManagement {
 
   saveLists(filePath: string) {
     const data = {
-      lists: this.lists.map((list) => {
-        return {
-          name: list.name,
-          columns: list.columns.map((column) => {
-            return this.serializeColumn(column);
-          }),
-          rows: list.rows.map((row) => {
-            return {
-              columns: row.columns.map((column) => {
-                return {
-                  type: column.type,
-                  name: column.name,
-                  value: column.getValue(),
-                };
-              }),
-            };
-          }),
-        };
-      }),
+      lists: this.lists,
     };
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   }
@@ -88,16 +59,24 @@ class ListManagement {
     const jsonData = fs.readFileSync(filePath, "utf-8");
     const data = JSON.parse(jsonData);
 
-    data.lists.forEach((list: any) => {
-      const newList = new List(list.name);
-      newList.columns = list.columns.map((columnData: any) => {
-        return ColumnFactory.createColumn(columnData.type, columnData.name);
+    data.lists.forEach((item: any) => {
+      const newList = new List(item.name);
+
+      newList.columns = item.columns.map((columnData: any) => {
+        let column = ColumnFactory.createColumn(
+          columnData.type,
+          columnData.name,
+          columnData.id
+        );
+        return column;
       });
-      newList.rows = list.rows.map((rowData: any) => {
+
+      newList.rows = item.rows.map((rowData: any) => {
         rowData.columns = rowData.columns.map((columnData: any) => {
           let column = ColumnFactory.createColumn(
             columnData.type,
-            columnData.name
+            columnData.name,
+            columnData.id
           );
           column.setValue(columnData.value);
           return column;

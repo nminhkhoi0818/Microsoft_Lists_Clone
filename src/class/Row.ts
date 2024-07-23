@@ -25,14 +25,14 @@ class ColumnFactory {
     [EnumColumnType.Lookup]: () => new TextColumn("", ""),
   };
 
-  static createColumn(type: EnumColumnType, name: string): Column {
-    const columnFactory = this.mapColumn[type];
-    if (!columnFactory) {
-      throw new Error(`Unsupported column type: ${type}`);
-    }
-
+  static createColumn(
+    type: EnumColumnType,
+    name: string,
+    id: string = ""
+  ): Column {
     const column = this.mapColumn[type]();
     column.name = name;
+    column.id = id || uuidv4();
 
     return column;
   }

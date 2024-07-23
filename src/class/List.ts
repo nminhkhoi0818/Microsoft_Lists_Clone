@@ -63,7 +63,7 @@ class List {
     });
   }
 
-  searchRows(search: string) {
+  search(search: string) {
     return this.rows.filter((row) => {
       return row.columns.some((col) => {
         return col.getValue().toString().includes(search);
@@ -75,6 +75,10 @@ class List {
     const start = (pageNum - 1) * pageSize;
     const end = start + pageSize;
     return this.rows.slice(start, end);
+  }
+
+  getPageCount(pageSize: number) {
+    return Math.ceil(this.rows.length / pageSize);
   }
 
   hideColumn(colName: string) {
