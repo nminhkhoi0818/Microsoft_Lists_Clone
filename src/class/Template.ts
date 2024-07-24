@@ -9,12 +9,12 @@ class Template {
   rows: Row[];
   summary: string;
 
-  constructor(name: string, columns: Column[], rows: Row[], summary: string) {
+  constructor(name: string, summary: string, columns: Column[], rows: Row[]) {
     this.id = uuidv4();
     this.name = name;
+    this.summary = summary;
     this.columns = columns;
     this.rows = rows;
-    this.summary = summary;
   }
 }
 

@@ -24,6 +24,33 @@ describe("Microsoft Lists Clone Application", () => {
 
   test("Add list from template", () => {
     let template = app.getTemplate("Task tracker");
+
+    const expectedData = [
+      {
+        "Task Name": "Task 1",
+        "Due Date": "2021-01-01",
+        Completed: false,
+        Priority: "High",
+      },
+      {
+        "Task Name": "Task 2",
+        "Due Date": "2021-02-01",
+        Completed: true,
+        Priority: "Medium",
+      },
+    ];
+
+    template?.rows.forEach((row, index) => {
+      expect(row.getValueCol("Task Name")).toBe(
+        expectedData[index]["Task Name"]
+      );
+      expect(row.getValueCol("Due Date")).toStrictEqual(
+        expectedData[index]["Due Date"]
+      );
+      expect(row.getValueCol("Completed")).toBe(expectedData[index].Completed);
+      expect(row.getValueCol("Priority")).toBe(expectedData[index].Priority);
+    });
+
     list = app.createFromTemplate("Task tracker", template!.id);
 
     const expectedColumns = ["Task Name", "Due Date", "Completed", "Priority"];
@@ -376,23 +403,6 @@ describe("Microsoft Lists Clone Application", () => {
     // Columns should be change in list
     list.columns.forEach((column, index) => {
       expect(column.name).toBe(expectedColumns[index]);
-    });
-
-    const formData = {
-      "Project Name": "Project A",
-      "Start Date": new Date("2023-01-01"),
-      "End Date": new Date("2023-12-31"),
-      Budget: 10000,
-      Status: "In Progress",
-      "Estimated Hours": 150,
-    };
-
-    form.submit(formData);
-
-    list.rows.forEach((row) => {
-      Object.keys(formData).forEach((colName) => {
-        expect(row.getValueCol(colName)).toStrictEqual(formData[colName]);
-      });
     });
   });
 

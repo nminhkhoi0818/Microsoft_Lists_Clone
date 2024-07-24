@@ -26,15 +26,6 @@ class Form {
     let column = this.columns.find((field) => field.name === colName);
     column!.isHidden = true;
   }
-
-  submit(data: any) {
-    const row: Row = new Row(this.columns);
-
-    Object.keys(data).forEach((colName) => {
-      row.setValueCol(colName, data[colName]);
-    });
-    this.rows.push(row);
-  }
 }
 
 export default Form;

@@ -1,13 +1,13 @@
 {
-  "templates": [
+  "lists": [
     {
       "name": "Template tracker",
+      "description": "A template for tracking people",
       "columns": [
         { "type": "Text", "name": "Full Name" },
         { "type": "Number", "name": "Age" },
         { "type": "Yes/No", "name": "Is Active" }
       ],
-      "description": "A template for tracking people",
       "rows": [
         {
           "columns": [
@@ -27,6 +27,7 @@
     },
     {
       "name": "Task tracker",
+      "description": "A template for tracking tasks",
       "columns": [
         { "type": "Text", "name": "Task Name" },
         { "type": "Date", "name": "Due Date" },
@@ -37,7 +38,6 @@
           "choices": ["High", "Medium", "Low"]
         }
       ],
-      "description": "A template for tracking tasks",
       "rows": [
         {
           "columns": [
@@ -59,6 +59,7 @@
     },
     {
       "name": "Project tracker",
+      "description": "A template for tracking projects",
       "columns": [
         { "type": "Text", "name": "Project Name" },
         { "type": "Date", "name": "Start Date" },
@@ -70,7 +71,6 @@
           "choices": ["Pending", "In Progress", "Completed"]
         }
       ],
-      "description": "A template for tracking projects",
       "rows": [
         {
           "columns": [

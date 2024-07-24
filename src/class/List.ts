@@ -141,6 +141,10 @@ class List {
     this.forms.push(form);
     return form;
   }
+
+  getForm(formName: string) {
+    return this.forms.find((form) => form.title === formName);
+  }
 }
 
 export default List;

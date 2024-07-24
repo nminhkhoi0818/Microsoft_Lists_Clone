@@ -35,24 +35,17 @@ class ListManagement {
     const jsonData = fs.readFileSync(filePath, "utf-8");
     const data = JSON.parse(jsonData);
 
-    data.templates.forEach((item: any) => {
+    data.lists.forEach((item: any) => {
       const newTemplate = new Template(
         item.name,
+        item.description,
         item.columns.map((columnData: any) => {
           return ColumnFactory.createColumn(columnData.type, columnData.name);
         }),
-        item.description,
-        item.rows
+        this.parseRows(item.rows)
       );
       this.templates.push(newTemplate);
     });
-  }
-
-  saveLists(filePath: string) {
-    const data = {
-      lists: this.lists,
-    };
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   }
 
   loadLists(filePath: string) {
@@ -61,33 +54,35 @@ class ListManagement {
 
     data.lists.forEach((item: any) => {
       const newList = new List(item.name);
-
       newList.columns = item.columns.map((columnData: any) => {
-        let column = ColumnFactory.createColumn(
-          columnData.type,
-          columnData.name,
-          columnData.id
-        );
-        return column;
+        return ColumnFactory.createColumn(columnData.type, columnData.name);
       });
-
-      newList.rows = item.rows.map((rowData: any) => {
-        rowData.columns = rowData.columns.map((columnData: any) => {
-          let column = ColumnFactory.createColumn(
-            columnData.type,
-            columnData.name,
-            columnData.id
-          );
-          column.setValue(columnData.value);
-          return column;
-        });
-
-        let row = new Row(rowData.columns);
-        row.columns = rowData.columns;
-        return row;
-      });
+      newList.rows = this.parseRows(item.rows);
       this.lists.push(newList);
     });
+  }
+
+  private parseRows(rowsData: any[]) {
+    return rowsData.map((rowData: any) => {
+      const columns = rowData.columns.map((columnData: any) => {
+        let column = ColumnFactory.createColumn(
+          columnData.type,
+          columnData.name
+        );
+        column.setValue(columnData.value);
+        return column;
+      });
+      let row = new Row(columns);
+      row.columns = columns;
+      return row;
+    });
+  }
+
+  saveLists(filePath: string) {
+    const data = {
+      lists: this.lists,
+    };
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   }
 
   serializeColumn(column: Column) {

@@ -25,14 +25,9 @@ class ColumnFactory {
     [EnumColumnType.Lookup]: () => new TextColumn("", ""),
   };
 
-  static createColumn(
-    type: EnumColumnType,
-    name: string,
-    id: string = ""
-  ): Column {
+  static createColumn(type: EnumColumnType, name: string): Column {
     const column = this.mapColumn[type]();
     column.name = name;
-    column.id = id || uuidv4();
 
     return column;
   }
