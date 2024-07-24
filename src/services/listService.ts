@@ -1,10 +1,10 @@
-import { ChoiceColumn, Column, TextColumn } from "./Column";
-import List from "./List";
-import { ColumnFactory, Row } from "./Row";
-import Template from "./Template";
 import fs from "fs";
+import Template from "../models/Template";
+import List from "../models/List";
+import { ChoiceColumn, Column, TextColumn } from "../models/Column";
+import { ColumnFactory, Row } from "../models/Row";
 
-class ListManagement {
+class ListService {
   lists: List[];
   templates: Template[];
 
@@ -109,4 +109,4 @@ class ListManagement {
   }
 }
 
-export default ListManagement;
+export default ListService;
