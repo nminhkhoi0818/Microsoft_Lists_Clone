@@ -12,8 +12,8 @@ class List {
   views: View[];
   forms: Form[];
 
-  constructor(name: string) {
-    this.id = uuidv4();
+  constructor(name: string, id?: string) {
+    this.id = id || uuidv4();
     this.name = name;
     this.columns = [];
     this.rows = [];

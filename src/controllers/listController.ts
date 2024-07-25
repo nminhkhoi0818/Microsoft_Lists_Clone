@@ -8,38 +8,67 @@ export class ListController {
   }
 
   createList(req, res) {
-    const { name } = req.body;
-    const newList = this.listService.createList(name);
-    res.status(201).json(newList);
+    try {
+      const { name } = req.body;
+      const newList = this.listService.createList(name);
+      res.status(201).json(newList);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
   }
 
   createFromTemplate(req, res) {
-    const { name, templateId } = req.body;
-    const newList = this.listService.createFromTemplate(name, templateId);
-    if (newList) {
+    try {
+      const { name, templateId } = req.body;
+      const newList = this.listService.createFromTemplate(name, templateId);
       res.status(201).json(newList);
-    } else {
-      res.status(404).json({ error: "Template not found" });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
+  }
+
+  getTemplates(req, res) {
+    res.json(this.listService.templates);
   }
 
   getLists(req, res) {
     res.json(this.listService.lists);
   }
 
-  getList(req, res) {
-    const { name } = req.params;
-    const list = this.listService.getList(name);
-    if (list) {
-      res.json(list);
-    } else {
-      res.status(404).json({ error: "List not found" });
+  deleteList(req, res) {
+    try {
+      const listId = req.params.listId;
+      this.listService.deleteList(listId);
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
     }
   }
 
-  deleteList(req, res) {
-    const { name } = req.params;
-    this.listService.deleteList(name);
-    res.status(204).send();
+  addColumn(req, res) {
+    try {
+      const listId = req.params.listId;
+      const { name, type } = req.body;
+      this.listService.addColumn(listId, name, type);
+      res.status(201).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  addRow(req, res) {
+    try {
+      const listId = req.params.listId;
+      const { data } = req.body;
+      this.listService.addRow(listId, data);
+      res.status(201).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
   }
 }
+
+// Xu ly trong service
+// Model chi la POCO
+// Error handling
+// Swagger

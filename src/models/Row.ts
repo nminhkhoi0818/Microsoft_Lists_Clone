@@ -7,28 +7,30 @@ import {
   TextColumn,
   YesNoColumn,
 } from "./Column";
-import { EnumChoiceType, EnumColumnType } from "./Enum";
+import { EnumColumnType } from "./Enum";
 
 class ColumnFactory {
-  static mapColumn: { [key: string]: () => Column } = {
-    [EnumColumnType.Text]: () => new TextColumn("", ""),
-    [EnumColumnType.Number]: () => new NumberColumn("", 0),
-    [EnumColumnType.YesNo]: () => new YesNoColumn("", false),
-    [EnumColumnType.Date]: () => new DateColumn("", new Date(0)),
-    [EnumColumnType.Choice]: () =>
-      new ChoiceColumn("", EnumChoiceType.Single, []),
-    [EnumColumnType.Hyperlink]: () => new TextColumn("", ""),
-    [EnumColumnType.Currency]: () => new NumberColumn("", 0),
-    [EnumColumnType.Location]: () => new TextColumn("", ""),
-    [EnumColumnType.Image]: () => new TextColumn("", ""),
-    [EnumColumnType.ManagedMetadata]: () => new TextColumn("", ""),
-    [EnumColumnType.Lookup]: () => new TextColumn("", ""),
+  static mapColumn: { [key: string]: (id: string, name: string) => Column } = {
+    [EnumColumnType.Text]: (id, name) => new TextColumn(id, name),
+    [EnumColumnType.Number]: (id, name) => new NumberColumn(id, name),
+    [EnumColumnType.YesNo]: (id, name) => new YesNoColumn(id, name),
+    [EnumColumnType.Date]: (id, name) => new DateColumn(id, name),
+    [EnumColumnType.Choice]: (id, name) => new ChoiceColumn(id, name),
+    [EnumColumnType.Hyperlink]: (id, name) => new TextColumn(id, name),
+    [EnumColumnType.Currency]: (id, name) => new NumberColumn(id, name),
+    [EnumColumnType.Location]: (id, name) => new TextColumn(id, name),
+    [EnumColumnType.Image]: (id, name) => new TextColumn(id, name),
+    [EnumColumnType.ManagedMetadata]: (id, name) => new TextColumn(id, name),
+    [EnumColumnType.Lookup]: (id, name) => new TextColumn(id, name),
   };
 
-  static createColumn(type: EnumColumnType, name: string): Column {
-    const column = this.mapColumn[type]();
-    column.name = name;
+  static loadColumn(id: string, type: EnumColumnType, name: string): Column {
+    const column = this.mapColumn[type](id, name);
+    return column;
+  }
 
+  static createColumn(type: string, name: string): Column {
+    const column = this.mapColumn[type](uuidv4(), name);
     return column;
   }
 }
@@ -40,20 +42,14 @@ class Row {
   constructor(columns: Column[]) {
     this.id = uuidv4();
     this.columns = columns.map((column) => {
-      if (column.type === EnumColumnType.Choice) {
-        let choiceColumn = column as ChoiceColumn;
-        return new ChoiceColumn(
-          choiceColumn.name,
-          choiceColumn.selectionType,
-          choiceColumn.options
-        );
-      }
-      return ColumnFactory.createColumn(column.type, column.name);
+      return ColumnFactory.loadColumn(column.id, column.type, column.name);
     });
   }
 
   addColumn(column: Column) {
-    this.columns.push(ColumnFactory.createColumn(column.type, column.name));
+    this.columns.push(
+      ColumnFactory.loadColumn(column.id, column.type, column.name)
+    );
   }
 
   setValueCol(name: string, value: any) {

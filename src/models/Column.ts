@@ -7,8 +7,8 @@ abstract class Column {
   type: EnumColumnType;
   isHidden: boolean;
 
-  constructor(name: string, type: EnumColumnType) {
-    this.id = uuidv4();
+  constructor(id: string, name: string, type: EnumColumnType) {
+    this.id = id || uuidv4();
     this.name = name;
     this.type = type;
     this.isHidden = false;
@@ -21,8 +21,8 @@ abstract class Column {
 class TextColumn extends Column {
   value: string;
 
-  constructor(name: string = "", value: string = "") {
-    super(name, EnumColumnType.Text);
+  constructor(id: string, name: string = "", value: string = "") {
+    super(id, name, EnumColumnType.Text);
     this.value = value;
   }
 
@@ -38,8 +38,8 @@ class TextColumn extends Column {
 class NumberColumn extends Column {
   value: number;
 
-  constructor(name: string = "", value: number = 0) {
-    super(name, EnumColumnType.Number);
+  constructor(id: string, name: string = "", value: number = 0) {
+    super(id, name, EnumColumnType.Number);
     this.value = value;
   }
 
@@ -55,8 +55,8 @@ class NumberColumn extends Column {
 class YesNoColumn extends Column {
   value: boolean;
 
-  constructor(name: string = "", value: boolean = false) {
-    super(name, EnumColumnType.YesNo);
+  constructor(id: string, name: string = "", value: boolean = false) {
+    super(id, name, EnumColumnType.YesNo);
     this.value = value;
   }
 
@@ -72,8 +72,8 @@ class YesNoColumn extends Column {
 class DateColumn extends Column {
   value: Date;
 
-  constructor(name: string = "", value: Date = new Date()) {
-    super(name, EnumColumnType.Date);
+  constructor(id: string, name: string = "", value: Date = new Date()) {
+    super(id, name, EnumColumnType.Date);
     this.value = value;
   }
 
@@ -91,8 +91,13 @@ class ChoiceColumn extends Column {
   selectionType: EnumChoiceType;
   options: string[];
 
-  constructor(name: string, selectionType: EnumChoiceType, options: string[]) {
-    super(name, EnumColumnType.Choice);
+  constructor(
+    id: string,
+    name: string,
+    selectionType: EnumChoiceType = EnumChoiceType.Single,
+    options: string[] = []
+  ) {
+    super(id, name, EnumColumnType.Choice);
     this.selectionType = selectionType;
     this.options = options;
   }
@@ -119,8 +124,8 @@ class ChoiceColumn extends Column {
 class HyperLinkColumn extends Column {
   value: string;
 
-  constructor(name: string = "", value: string = "") {
-    super(name, EnumColumnType.Hyperlink);
+  constructor(id: string, name: string = "", value: string = "") {
+    super(id, name, EnumColumnType.Hyperlink);
     this.value = value;
   }
 
@@ -139,8 +144,8 @@ class CurrencyColumn extends Column {
   currencyFormat: string;
   defaultValue: number;
 
-  constructor(name: string = "", value: number = 0) {
-    super(name, EnumColumnType.Currency);
+  constructor(id: string, name: string = "", value: number = 0) {
+    super(id, name, EnumColumnType.Currency);
     this.value = value;
     this.decimalPlaces = 2;
     this.currencyFormat = "USD";
@@ -159,8 +164,8 @@ class CurrencyColumn extends Column {
 class LocationColumn extends Column {
   value: string;
 
-  constructor(name: string = "", value: string = "") {
-    super(name, EnumColumnType.Location);
+  constructor(id: string, name: string = "", value: string = "") {
+    super(id, name, EnumColumnType.Location);
     this.value = value;
   }
 
@@ -176,8 +181,8 @@ class LocationColumn extends Column {
 class ImageColumn extends Column {
   value: string;
 
-  constructor(name: string = "", value: string = "") {
-    super(name, EnumColumnType.Image);
+  constructor(id: string, name: string = "", value: string = "") {
+    super(id, name, EnumColumnType.Image);
     this.value = value;
   }
 
@@ -193,8 +198,8 @@ class ImageColumn extends Column {
 class ManagedMetadataColumn extends Column {
   value: string;
 
-  constructor(name: string = "", value: string = "") {
-    super(name, EnumColumnType.ManagedMetadata);
+  constructor(id: string, name: string = "", value: string = "") {
+    super(id, name, EnumColumnType.ManagedMetadata);
     this.value = value;
   }
 
@@ -210,8 +215,8 @@ class ManagedMetadataColumn extends Column {
 class LookupColumn extends Column {
   value: string;
 
-  constructor(name: string = "", value: string = "") {
-    super(name, EnumColumnType.Lookup);
+  constructor(id: string, name: string = "", value: string = "") {
+    super(id, name, EnumColumnType.Lookup);
     this.value = value;
   }
 
