@@ -13,7 +13,7 @@ class List {
   forms: Form[];
 
   constructor(name: string, id?: string) {
-    this.id = id || uuidv4();
+    this.id = id ?? uuidv4();
     this.name = name;
     this.columns = [];
     this.rows = [];

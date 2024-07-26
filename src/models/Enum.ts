@@ -13,6 +13,16 @@ enum EnumColumnType {
   Lookup = "Lookup",
 }
 
+enum EnumChoiceField {
+  Option = "Option",
+}
+
+enum EnumCurrencyField {
+  decimalPlaces = "Decimal Places",
+  currencyFormat = "Currency Format",
+  defaultValue = "Default Value",
+}
+
 enum EnumViewType {
   List,
   Calendar,
@@ -27,8 +37,8 @@ enum EnumCalendarDisplay {
 }
 
 enum EnumChoiceType {
-  Single,
-  Multiple,
+  Single = "Single",
+  Multiple = "Multiple",
 }
 
 export { EnumColumnType, EnumViewType, EnumChoiceType, EnumCalendarDisplay };

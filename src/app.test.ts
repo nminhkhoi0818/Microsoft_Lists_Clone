@@ -4,13 +4,13 @@ import {
   NumberColumn,
   YesNoColumn,
   DateColumn,
-} from "./class/Column";
-import { FILE_PATHS } from "./class/config";
-import { EnumCalendarDisplay, EnumChoiceType } from "./class/Enum";
-import List from "./class/List";
+} from "./models/Column";
+import { FILE_PATHS } from "./config/default";
+import { EnumCalendarDisplay, EnumChoiceType } from "./models/Enum";
+import List from "./models/List";
 import ListManagement from "./class/ListManagement";
 import path from "path";
-import { BoardView, CalendarView, ListView } from "./class/View";
+import { BoardView, CalendarView, ListView } from "./models/View";
 
 describe("Microsoft Lists Clone Application", () => {
   let app: ListManagement;

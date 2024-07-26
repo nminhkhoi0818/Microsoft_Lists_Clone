@@ -1,10 +1,11 @@
 import fs from "fs";
 import Template from "../models/Template";
 import List from "../models/List";
-import { ChoiceColumn, Column, TextColumn } from "../models/Column";
+import { ChoiceColumn, TextColumn } from "../models/Column";
 import { ColumnFactory, Row } from "../models/Row";
 import path from "path";
 import { FILE_PATHS } from "../config/default";
+import { EnumColumnType } from "../models/Enum";
 
 class ListService {
   lists: List[];
@@ -33,9 +34,14 @@ class ListService {
   }
 
   createFromTemplate(name: string, templateId: string) {
-    let template = this.templates.find(
+    if (this.templates.find((template) => template.id === templateId)) {
+      throw new Error("Template not found");
+    }
+
+    const template = this.templates.find(
       (template) => template.id === templateId
     );
+
     let list = new List(name);
     list.columns = template!.columns;
     this.lists.push(list);
@@ -53,11 +59,7 @@ class ListService {
         item.name,
         item.description,
         item.columns.map((columnData: any) => {
-          return ColumnFactory.loadColumn(
-            columnData.id,
-            columnData.type,
-            columnData.name
-          );
+          return ColumnFactory.loadColumn(columnData);
         }),
         this.parseRows(item.rows)
       );
@@ -72,11 +74,7 @@ class ListService {
     data.lists.forEach((item: any) => {
       const newList = new List(item.name, item.id);
       newList.columns = item.columns.map((columnData: any) => {
-        return ColumnFactory.loadColumn(
-          columnData.id,
-          columnData.type,
-          columnData.name
-        );
+        return ColumnFactory.loadColumn(columnData);
       });
       newList.rows = this.parseRows(item.rows);
       this.lists.push(newList);
@@ -86,11 +84,7 @@ class ListService {
   parseRows(rowsData: any[]) {
     return rowsData.map((rowData: any) => {
       const columns = rowData.columns.map((columnData: any) => {
-        let column = ColumnFactory.loadColumn(
-          columnData.id,
-          columnData.type,
-          columnData.name
-        );
+        let column = ColumnFactory.loadColumn(columnData);
         column.setValue(columnData.value);
         return column;
       });
@@ -105,17 +99,6 @@ class ListService {
       lists: this.lists,
     };
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-  }
-
-  serializeColumn(column: Column) {
-    const serialized: any = {
-      type: column.type,
-      name: column.name,
-    };
-    if (column instanceof ChoiceColumn) {
-      serialized.options = column.options;
-    }
-    return serialized;
   }
 
   deleteList(listId: string) {
@@ -135,21 +118,39 @@ class ListService {
     return this.templates.find((template) => template.name === templateName);
   }
 
-  addColumn(listId: string, name: string, type: string) {
+  getListById(listId: string) {
     const list = this.lists.find((list) => list.id === listId);
-    if (list) {
-      const column = ColumnFactory.createColumn(type, name);
-      list.addColumn(column);
-      this.saveLists(this.listPath);
-    } else {
-      throw new Error("List not found");
+    if (!list) throw new Error("List not found");
+    return list;
+  }
+
+  addColumn(listId: string, data: any) {
+    const list = this.getListById(listId);
+
+    const { name } = data;
+    if (list.columns.find((col) => col.name === name)) {
+      throw new Error("Column already exists");
     }
+
+    const column = ColumnFactory.createColumn(data);
+    list.addColumn(column);
+    this.saveLists(this.listPath);
+  }
+
+  deleteColumn(listId: string, columnId: string) {
+    const list = this.getListById(listId);
+    const column = list.columns.find((col) => col.id === columnId);
+
+    list.columns = list.columns.filter((col) => col.id !== columnId);
+    list.rows.forEach((row) => {
+      row.columns = row.columns.filter((col) => col.name !== column?.name);
+    });
+
+    this.saveLists(this.listPath);
   }
 
   addRow(listId: string, data: any) {
-    const list = this.lists.find((list) => list.id === listId);
-    if (!list) throw new Error("List not found");
-
+    const list = this.getListById(listId);
     const row: Row = new Row(list.columns);
 
     data.forEach((colData) => {
@@ -158,6 +159,30 @@ class ListService {
       });
     });
     list.rows.push(row);
+    this.saveLists(this.listPath);
+  }
+
+  deleteRow(listId: string, rowId: string) {
+    const list = this.getListById(listId);
+    list.rows = list.rows.filter((row) => row.id !== rowId);
+    this.saveLists(this.listPath);
+  }
+
+  addOption(listId: string, columnId: string, option: string) {
+    const list = this.getListById(listId);
+    const column = list.columns.find(
+      (col) => col.id === columnId
+    ) as ChoiceColumn;
+
+    if (!column) {
+      throw new Error("Column not found");
+    }
+
+    if (column.type !== EnumColumnType.Choice) {
+      throw new Error("Column is not a choice type");
+    }
+
+    column.addOption(option);
     this.saveLists(this.listPath);
   }
 }

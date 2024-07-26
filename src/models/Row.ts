@@ -7,15 +7,23 @@ import {
   TextColumn,
   YesNoColumn,
 } from "./Column";
-import { EnumColumnType } from "./Enum";
+import { EnumChoiceType, EnumColumnType } from "./Enum";
 
 class ColumnFactory {
-  static mapColumn: { [key: string]: (id: string, name: string) => Column } = {
+  static mapColumn: {
+    [key: string]: (
+      id: string,
+      name: string,
+      selectionType?: EnumChoiceType,
+      options?: string[]
+    ) => Column;
+  } = {
     [EnumColumnType.Text]: (id, name) => new TextColumn(id, name),
     [EnumColumnType.Number]: (id, name) => new NumberColumn(id, name),
     [EnumColumnType.YesNo]: (id, name) => new YesNoColumn(id, name),
     [EnumColumnType.Date]: (id, name) => new DateColumn(id, name),
-    [EnumColumnType.Choice]: (id, name) => new ChoiceColumn(id, name),
+    [EnumColumnType.Choice]: (id, name, selectionType, options) =>
+      new ChoiceColumn(id, name, selectionType, options),
     [EnumColumnType.Hyperlink]: (id, name) => new TextColumn(id, name),
     [EnumColumnType.Currency]: (id, name) => new NumberColumn(id, name),
     [EnumColumnType.Location]: (id, name) => new TextColumn(id, name),
@@ -24,13 +32,15 @@ class ColumnFactory {
     [EnumColumnType.Lookup]: (id, name) => new TextColumn(id, name),
   };
 
-  static loadColumn(id: string, type: EnumColumnType, name: string): Column {
-    const column = this.mapColumn[type](id, name);
+  static loadColumn(data: any): Column {
+    const { id, type, name, options, selectionType } = data;
+    const column = this.mapColumn[type](id, name, selectionType, options);
     return column;
   }
 
-  static createColumn(type: string, name: string): Column {
-    const column = this.mapColumn[type](uuidv4(), name);
+  static createColumn(data: any): Column {
+    const { type, name, options, selectionType } = data;
+    const column = this.mapColumn[type](uuidv4(), name, selectionType, options);
     return column;
   }
 }
@@ -42,14 +52,12 @@ class Row {
   constructor(columns: Column[]) {
     this.id = uuidv4();
     this.columns = columns.map((column) => {
-      return ColumnFactory.loadColumn(column.id, column.type, column.name);
+      return ColumnFactory.loadColumn(column);
     });
   }
 
   addColumn(column: Column) {
-    this.columns.push(
-      ColumnFactory.loadColumn(column.id, column.type, column.name)
-    );
+    this.columns.push(ColumnFactory.loadColumn(column));
   }
 
   setValueCol(name: string, value: any) {

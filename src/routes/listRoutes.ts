@@ -66,7 +66,7 @@ router.delete("/:listId", (req, res) => {
 
 /**
  * @swagger
- * /api/list/{listId}/columns:
+ * /api/lists/{listId}/columns:
  *   post:
  *     summary: Add a column to a list
  *     tags: [Column]
@@ -93,6 +93,31 @@ router.delete("/:listId", (req, res) => {
  */
 router.post("/:listId/columns", (req, res) => {
   listController.addColumn(req, res);
+});
+
+/**
+ * @swagger
+ * /api/lists/{listId}/columns/{columnId}:
+ *   delete:
+ *     summary: Delete a column from a list
+ *     tags: [Column]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: columnId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Column deleted
+ */
+router.delete("/:listId/columns/:columnId", (req, res) => {
+  listController.deleteColumn(req, res);
 });
 
 /**
@@ -124,8 +149,68 @@ router.post("/:listId/rows", (req, res) => {
   listController.addRow(req, res);
 });
 
-// router.get("/{list-id}/search", (req, res) => {
-//   listController.search(req, res);
-// })
+/**
+ * @swagger
+ * /api/lists/{listId}/rows/{rowId}:
+ *   delete:
+ *     summary: Delete a row from a list
+ *     tags: [Row]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: rowId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Row deleted
+ */
+router.delete("/:listId/rows/:rowId", (req, res) => {
+  listController.deleteRow(req, res);
+});
+
+/**
+ * @swagger
+ * /api/lists/{listId}/columns/{columnId}/options:
+ *   post:
+ *     summary: Add an option to a column
+ *     tags: [Column]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the list
+ *       - in: path
+ *         name: columnId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the column
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               option:
+ *                 type: string
+ *                 description: The option to be added to the column
+ *     responses:
+ *       200:
+ *         description: Option added
+ *       400:
+ *         description: Bad request
+ */
+router.post("/:listId/columns/:columnId/options", (req, res) => {
+  listController.addOption(req, res);
+});
 
 export default router;

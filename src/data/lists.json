@@ -19,24 +19,22 @@
           "value": 0
         },
         {
-          "id": "f070c973-6057-44e6-a67f-72b5405bd4ff",
+          "id": "41795fa4-3c7a-47a9-a3bb-d9cfbf31a298",
           "name": "Gender",
           "type": "Choice",
           "isHidden": false,
-          "selectionType": 0,
-          "options": []
-        },
-        {
-          "id": "1d73720e-e498-419b-9e82-39460752bc74",
-          "name": "Todo",
-          "type": "Text",
-          "isHidden": false,
-          "value": ""
+          "selectionType": "Single",
+          "options": [
+            "Male",
+            "Female",
+            "Other",
+            "Test"
+          ]
         }
       ],
       "rows": [
         {
-          "id": "942b629e-c559-4b33-9c8f-a52f5e29fffb",
+          "id": "d0b91346-d259-4c76-98d7-10bee3b9ee35",
           "columns": [
             {
               "id": "e8c8eb03-7ee1-4dad-9505-ebce6e073042",
@@ -53,25 +51,21 @@
               "value": 30
             },
             {
-              "id": "71be7828-2ac0-439a-9868-c86e43c49eb4",
+              "id": "41795fa4-3c7a-47a9-a3bb-d9cfbf31a298",
               "name": "Gender",
               "type": "Choice",
               "isHidden": false,
-              "selectionType": 0,
-              "options": [],
-              "value": "Male"
-            },
-            {
-              "id": "1d73720e-e498-419b-9e82-39460752bc74",
-              "name": "Todo",
-              "type": "Text",
-              "isHidden": false,
-              "value": ""
+              "selectionType": "Single",
+              "options": [
+                "Male",
+                "Female",
+                "Other"
+              ]
             }
           ]
         },
         {
-          "id": "2489fc9c-5a1b-43c0-bc67-04d5abe110af",
+          "id": "205c17a7-4893-469f-b2a5-db4d81cfd324",
           "columns": [
             {
               "id": "6bf902fd-3260-4e80-8c62-ce7f7f4e68c0",
@@ -88,55 +82,16 @@
               "value": 25
             },
             {
-              "id": "459018df-0e49-4ba0-ab36-ed3a89f67794",
+              "id": "41795fa4-3c7a-47a9-a3bb-d9cfbf31a298",
               "name": "Gender",
               "type": "Choice",
               "isHidden": false,
-              "selectionType": 0,
-              "options": [],
-              "value": "Female"
-            },
-            {
-              "id": "1d73720e-e498-419b-9e82-39460752bc74",
-              "name": "Todo",
-              "type": "Text",
-              "isHidden": false,
-              "value": ""
-            }
-          ]
-        },
-        {
-          "id": "fa6eeda0-b483-4b44-9d8b-5e7e8c0e26f5",
-          "columns": [
-            {
-              "id": "faf89b53-b757-4019-b8c3-bfd281c3feba",
-              "name": "Title",
-              "type": "Text",
-              "isHidden": false,
-              "value": "string"
-            },
-            {
-              "id": "ad0794d1-2b46-494b-88a0-64f3340ce723",
-              "name": "Age",
-              "type": "Number",
-              "isHidden": false,
-              "value": 30
-            },
-            {
-              "id": "f070c973-6057-44e6-a67f-72b5405bd4ff",
-              "name": "Gender",
-              "type": "Choice",
-              "isHidden": false,
-              "selectionType": 0,
-              "options": [],
-              "value": "Male"
-            },
-            {
-              "id": "1d73720e-e498-419b-9e82-39460752bc74",
-              "name": "Todo",
-              "type": "Text",
-              "isHidden": false,
-              "value": ""
+              "selectionType": "Single",
+              "options": [
+                "Male",
+                "Female",
+                "Other"
+              ]
             }
           ]
         }
@@ -168,37 +123,19 @@
           "type": "Yes/No",
           "isHidden": false,
           "value": false
+        },
+        {
+          "id": "ebe86282-abc2-4622-971e-169b6c12d474",
+          "name": "Gender",
+          "type": "Choice",
+          "isHidden": false,
+          "selectionType": 0,
+          "options": []
         }
       ],
       "rows": [
         {
-          "id": "86ebf98d-f4c3-42a6-a8c5-d357d3c52532",
-          "columns": [
-            {
-              "id": "0999afcf-a3a0-4ed8-831f-ded250c5af8b",
-              "name": "Title",
-              "type": "Text",
-              "isHidden": false,
-              "value": "Peter"
-            },
-            {
-              "id": "ba5b79b7-03a8-43ff-90d5-6f9228d32330",
-              "name": "Age",
-              "type": "Number",
-              "isHidden": false,
-              "value": 35
-            },
-            {
-              "id": "59cf2229-224e-426e-b783-bb086291e4f3",
-              "name": "Is Active",
-              "type": "Yes/No",
-              "isHidden": false,
-              "value": true
-            }
-          ]
-        },
-        {
-          "id": "75ece8f9-fee1-4049-9bce-75780c68df6e",
+          "id": "26a23d55-afb3-4997-ab1e-cd22fc774eeb",
           "columns": [
             {
               "id": "8c057f62-3cdf-4c4d-a3ff-a6526bb39890",
@@ -220,6 +157,14 @@
               "type": "Yes/No",
               "isHidden": false,
               "value": false
+            },
+            {
+              "id": "ebe86282-abc2-4622-971e-169b6c12d474",
+              "name": "Gender",
+              "type": "Choice",
+              "isHidden": false,
+              "selectionType": 0,
+              "options": []
             }
           ]
         }

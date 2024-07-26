@@ -48,9 +48,19 @@ export class ListController {
   addColumn(req, res) {
     try {
       const listId = req.params.listId;
-      const { name, type } = req.body;
-      this.listService.addColumn(listId, name, type);
+      this.listService.addColumn(listId, req.body);
       res.status(201).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  deleteColumn(req, res) {
+    try {
+      const listId = req.params.listId;
+      const columnId = req.params.columnId;
+      this.listService.deleteColumn(listId, columnId);
+      res.status(204).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -66,9 +76,27 @@ export class ListController {
       res.status(400).json({ error: error.message });
     }
   }
-}
 
-// Xu ly trong service
-// Model chi la POCO
-// Error handling
-// Swagger
+  deleteRow(req, res) {
+    try {
+      const listId = req.params.listId;
+      const rowId = req.params.rowId;
+      this.listService.deleteRow(listId, rowId);
+      res.status(204).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  addOption(req, res) {
+    try {
+      const listId = req.params.listId;
+      const columnId = req.params.columnId;
+      const { option } = req.body;
+      this.listService.addOption(listId, columnId, option);
+      res.status(200).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+}
