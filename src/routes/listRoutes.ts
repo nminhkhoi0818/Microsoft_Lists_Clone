@@ -14,10 +14,59 @@ const listController = new ListController(listService);
  *     tags: [List]
  *     responses:
  *       200:
- *         description: A list of lists
+ *         description: A list of all lists
+ *       400:
+ *         description: Bad request
  */
 router.get("/", (req, res) => {
-  listController.getLists(req, res);
+  listController.getAllLists(req, res);
+});
+
+/**
+ * @swagger
+ * /api/lists/{listId}:
+ *   get:
+ *     summary: Get a specific list by ID with optional sorting and searching
+ *     tags: [List]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the list to retrieve
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: A search term to filter rows
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *         description: The field to sort by (e.g., 'Title', 'Date')
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of rows per page
+ *     responses:
+ *       200:
+ *         description: The list with the specified ID
+ *       404:
+ *         description: List not found
+ *       400:
+ *         description: Bad request
+ */
+router.get("/:listId", (req, res) => {
+  listController.getList(req, res);
 });
 
 /**

@@ -31,8 +31,19 @@ export class ListController {
     res.json(this.listService.templates);
   }
 
-  getLists(req, res) {
+  getAllLists(req, res) {
     res.json(this.listService.lists);
+  }
+
+  getList(req, res) {
+    try {
+      const { listId } = req.params;
+      const { search, sort, page, pageSize } = req.query;
+
+      res.json(this.listService.getList(listId, search, sort, page, pageSize));
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
   }
 
   deleteList(req, res) {

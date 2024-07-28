@@ -57,7 +57,6 @@ class ListService {
     data.lists.forEach((item: any) => {
       const newTemplate = new Template(
         item.name,
-        item.description,
         item.columns.map((columnData: any) => {
           return ColumnFactory.loadColumn(columnData);
         }),
@@ -108,14 +107,6 @@ class ListService {
 
     this.lists = this.lists.filter((list) => list.id !== listId);
     this.saveLists(this.listPath);
-  }
-
-  getList(listName: string) {
-    return this.lists.find((list) => list.name === listName);
-  }
-
-  getTemplate(templateName: string) {
-    return this.templates.find((template) => template.name === templateName);
   }
 
   getListById(listId: string) {
@@ -185,6 +176,42 @@ class ListService {
     column.addOption(option);
     this.saveLists(this.listPath);
   }
-}
 
+  getList(
+    listId: string,
+    search: string,
+    sort: string,
+    page: number,
+    pageSize: number
+  ) {
+    const list = this.getListById(listId);
+    let rows = [...list.rows];
+
+    if (search) {
+      rows = list.rows.filter((row) => {
+        return row.columns.some((col) => {
+          return col.getValue().toString().includes(search);
+        });
+      });
+    }
+
+    if (sort) {
+      const column = list.getColumn(sort);
+      if (!column) {
+        throw new Error("Column not found");
+      }
+      rows = rows.sort((a, b) => {
+        return a.getValueCol(sort) < b.getValueCol(sort) ? 1 : -1;
+      });
+    }
+
+    const totalRows = rows.length;
+    const totalPages = Math.ceil(totalRows / pageSize);
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const paginatedRows = rows.slice(start, end);
+
+    return { ...list, rows: paginatedRows };
+  }
+}
 export default ListService;

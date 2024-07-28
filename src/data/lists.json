@@ -60,7 +60,8 @@
                 "Male",
                 "Female",
                 "Other"
-              ]
+              ],
+              "value": "Male"
             }
           ]
         },
@@ -91,7 +92,8 @@
                 "Male",
                 "Female",
                 "Other"
-              ]
+              ],
+              "value": "Male"
             }
           ]
         }
@@ -164,7 +166,8 @@
               "type": "Choice",
               "isHidden": false,
               "selectionType": 0,
-              "options": []
+              "options": [],
+              "value": "Male"
             }
           ]
         }
