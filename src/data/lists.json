@@ -6,7 +6,7 @@
       "columns": [
         {
           "id": "faf89b53-b757-4019-b8c3-bfd281c3feba",
-          "name": "Title",
+          "name": "Full Name",
           "type": "Text",
           "isHidden": false,
           "value": ""
@@ -34,7 +34,7 @@
       ],
       "rows": [
         {
-          "id": "9133d99a-9a0e-4b90-9e7b-06917e36a29d",
+          "id": "dc391574-a307-418c-a72c-7065165ab072",
           "columns": [
             {
               "id": "e8c8eb03-7ee1-4dad-9505-ebce6e073042",
@@ -48,7 +48,7 @@
               "name": "Age",
               "type": "Number",
               "isHidden": false,
-              "value": 30
+              "value": 40
             },
             {
               "id": "41795fa4-3c7a-47a9-a3bb-d9cfbf31a298",
@@ -66,7 +66,7 @@
           ]
         },
         {
-          "id": "feb4669c-2cb3-47a2-a044-2fc981a7eb78",
+          "id": "7577c0e2-35ab-4d93-827a-3039cc377345",
           "columns": [
             {
               "id": "6bf902fd-3260-4e80-8c62-ce7f7f4e68c0",
@@ -137,7 +137,7 @@
       ],
       "rows": [
         {
-          "id": "e76b7c72-b9ba-4e25-9db9-5fe757959e06",
+          "id": "adcc5229-9f64-439d-9a20-e11c3f7769d8",
           "columns": [
             {
               "id": "8c057f62-3cdf-4c4d-a3ff-a6526bb39890",
@@ -178,6 +178,36 @@
     {
       "id": "ecaa2c79-c542-44a3-903e-2819fdc82e55",
       "name": "Test",
+      "columns": [
+        {
+          "id": "77b97566-923d-4c36-9351-1a4771b42017",
+          "name": "Full Name",
+          "type": "Text",
+          "isHidden": false,
+          "value": ""
+        },
+        {
+          "id": "e6a49f2e-4813-479b-b65e-245c34368a24",
+          "name": "Age",
+          "type": "Number",
+          "isHidden": false,
+          "value": 0
+        },
+        {
+          "id": "07159c26-7418-43fd-8c28-b19d5a9330ca",
+          "name": "Is Active",
+          "type": "Yes/No",
+          "isHidden": false,
+          "value": false
+        }
+      ],
+      "rows": [],
+      "views": [],
+      "forms": []
+    },
+    {
+      "id": "0da76470-f05b-47f6-9f99-8de868666eb6",
+      "name": "Test Template",
       "columns": [
         {
           "id": "77b97566-923d-4c36-9351-1a4771b42017",

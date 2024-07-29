@@ -49,11 +49,9 @@ class Row {
   id: string;
   columns: Column[];
 
-  constructor(columns: Column[]) {
-    this.id = uuidv4();
-    this.columns = columns.map((column) => {
-      return ColumnFactory.loadColumn(column);
-    });
+  constructor(columns: Column[], id?: string) {
+    this.id = id ?? uuidv4();
+    this.columns = columns;
   }
 
   addColumn(column: Column) {

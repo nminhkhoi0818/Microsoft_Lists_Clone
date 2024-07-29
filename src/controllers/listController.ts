@@ -28,15 +28,29 @@ export class ListController {
   }
 
   getAllLists(req, res) {
-    res.json(this.listService.lists);
+    try {
+      const lists = this.listService.getAllLists();
+      res.json(lists);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
   }
 
-  getList(req, res) {
+  getAllTemplates(req, res) {
+    try {
+      const templates = this.listService.getAllTemplates();
+      res.json(templates);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  getRows(req, res) {
     try {
       const { listId } = req.params;
       const { search, sort, page, pageSize } = req.query;
 
-      res.json(this.listService.getList(listId, search, sort, page, pageSize));
+      res.json(this.listService.getRows(listId, search, sort, page, pageSize));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -140,5 +154,9 @@ export class ListController {
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
+  }
+
+  getTemplates(req, res) {
+    res.json(this.listService.templates);
   }
 }

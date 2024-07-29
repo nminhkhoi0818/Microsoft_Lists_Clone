@@ -3,70 +3,96 @@ import List from "../models/List";
 import { ChoiceColumn, TextColumn } from "../models/Column";
 import { ColumnFactory, Row } from "../models/Row";
 import path from "path";
-import { FILE_PATHS } from "../config/default";
+import { DEFAULT_COLUMNS, FILE_PATHS } from "../config/default";
 import { EnumColumnType } from "../models/Enum";
-import TemplateService from "./templateService";
+import Template from "../models/Template";
 
 class ListService {
   lists: List[];
-  listPath = path.resolve(__dirname, FILE_PATHS.LISTS);
-  templatePath = path.resolve(__dirname, FILE_PATHS.TEMPLATES);
+  templates: Template[];
 
   constructor() {
     this.lists = [];
-    this.loadLists();
+    this.templates = [];
   }
 
   createList(name: string) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+
     if (this.lists.find((list) => list.name === name)) {
       throw new Error("List already exists");
     }
 
     let newList = new List(name);
-    newList.addColumn(new TextColumn("Title"));
+    newList.addColumn(new TextColumn(DEFAULT_COLUMNS.NAME));
     this.lists.push(newList);
 
-    this.saveLists(this.listPath);
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
     return newList;
   }
 
   createFromTemplate(name: string, templateId: string) {
-    let templateService = new TemplateService();
-    const template = templateService.templates.find(
+    this.loadTemplates(path.resolve(__dirname, FILE_PATHS.TEMPLATES));
+    const template = this.templates.find(
       (template) => template.id === templateId
     );
 
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
     let list = new List(name);
     list.columns = template!.columns;
     this.lists.push(list);
 
-    this.saveLists(this.listPath);
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
     return list;
   }
 
-  loadLists() {
-    const jsonData = fs.readFileSync(this.listPath, "utf-8");
-    const data = JSON.parse(jsonData);
+  loadLists(filePath: string) {
+    try {
+      const jsonData = fs.readFileSync(filePath, "utf-8");
+      const data = JSON.parse(jsonData);
 
-    data.lists.forEach((item: any) => {
-      const newList = new List(item.name, item.id);
-      newList.columns = item.columns.map((columnData: any) => {
-        return ColumnFactory.loadColumn(columnData);
+      this.lists = data.lists.map((item: any) => {
+        const list = new List(item.name, item.id);
+        list.columns = item.columns.map((columnData: any) => {
+          return ColumnFactory.loadColumn(columnData);
+        });
+        list.rows = this.parseRows(item.rows);
+        return list;
       });
-      newList.rows = this.parseRows(item.rows);
-      this.lists.push(newList);
-    });
+    } catch (error) {
+      console.log("Error loading lists", error);
+    }
+  }
+
+  loadTemplates(filePath: string) {
+    try {
+      const jsonData = fs.readFileSync(filePath, "utf-8");
+      const data = JSON.parse(jsonData);
+
+      data.templates.forEach((item: any) => {
+        const newTemplate = new Template(
+          item.name,
+          item.columns.map((columnData: any) => {
+            return ColumnFactory.loadColumn(columnData);
+          }),
+          this.parseRows(item.rows),
+          item.id
+        );
+        this.templates.push(newTemplate);
+      });
+    } catch (error) {
+      console.log("Error loading templates", error);
+    }
   }
 
   parseRows(rowsData: any[]) {
-    return rowsData.map((rowData: any) => {
-      const columns = rowData.columns.map((columnData: any) => {
+    return rowsData.map((item: any) => {
+      const columns = item.columns.map((columnData: any) => {
         let column = ColumnFactory.loadColumn(columnData);
         column.setValue(columnData.value);
         return column;
       });
-      let row = new Row(columns);
-      row.columns = columns;
+      let row = new Row(columns, item.id);
       return row;
     });
   }
@@ -78,6 +104,16 @@ class ListService {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   }
 
+  getAllLists() {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    return this.lists;
+  }
+
+  getAllTemplates() {
+    this.loadTemplates(path.resolve(__dirname, FILE_PATHS.TEMPLATES));
+    return this.templates;
+  }
+
   updateList(listId: string, name: string) {
     const list = this.lists.find((list) => list.id === listId);
     if (!list) {
@@ -85,25 +121,29 @@ class ListService {
     }
 
     list.name = name;
-    this.saveLists(this.listPath);
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
   deleteList(listId: string) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
     if (!this.lists.find((list) => list.id === listId)) {
       throw new Error("List not found");
     }
 
     this.lists = this.lists.filter((list) => list.id !== listId);
-    this.saveLists(this.listPath);
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
   getListById(listId: string) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
     const list = this.lists.find((list) => list.id === listId);
     if (!list) throw new Error("List not found");
+
     return list;
   }
 
   addColumn(listId: string, data: any) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
     const list = this.getListById(listId);
 
     const { name } = data;
@@ -113,10 +153,16 @@ class ListService {
 
     const column = ColumnFactory.createColumn(data);
     list.addColumn(column);
-    this.saveLists(this.listPath);
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
-  updateColumn(listId: string, columnId: string, name: string, type: string) {
+  updateColumn(
+    listId: string,
+    columnId: string,
+    name: string,
+    type: EnumColumnType
+  ) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
     const list = this.getListById(listId);
     const column = list.columns.find((col) => col.id === columnId);
     if (!column) {
@@ -124,11 +170,13 @@ class ListService {
     }
 
     column.name = name;
-    // column.type = type;
-    this.saveLists(this.listPath);
+    column.type = type;
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
   deleteColumn(listId: string, columnId: string) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+
     const list = this.getListById(listId);
     const column = list.columns.find((col) => col.id === columnId);
 
@@ -137,10 +185,12 @@ class ListService {
       row.columns = row.columns.filter((col) => col.name !== column?.name);
     });
 
-    this.saveLists(this.listPath);
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
   addRow(listId: string, data: any) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+
     const list = this.getListById(listId);
     const row: Row = new Row(list.columns);
 
@@ -150,10 +200,12 @@ class ListService {
       });
     });
     list.rows.push(row);
-    this.saveLists(this.listPath);
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
   updateRow(listId: string, rowId: string, data: any) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+
     const list = this.getListById(listId);
     const row = list.rows.find((row) => row.id === rowId);
     if (!row) {
@@ -166,16 +218,20 @@ class ListService {
       });
     });
 
-    this.saveLists(this.listPath);
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
   deleteRow(listId: string, rowId: string) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+
     const list = this.getListById(listId);
     list.rows = list.rows.filter((row) => row.id !== rowId);
-    this.saveLists(this.listPath);
+
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
   addOption(listId: string, columnId: string, option: string) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
     const list = this.getListById(listId);
     const column = list.columns.find(
       (col) => col.id === columnId
@@ -190,16 +246,17 @@ class ListService {
     }
 
     column.addOption(option);
-    this.saveLists(this.listPath);
+    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
-  getList(
+  getRows(
     listId: string,
     search: string,
     sort: string,
     page: number,
     pageSize: number
   ) {
+    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
     const list = this.getListById(listId);
     let rows = [...list.rows];
 
@@ -227,7 +284,7 @@ class ListService {
     const end = start + pageSize;
     const paginatedRows = rows.slice(start, end);
 
-    return { ...list, rows: paginatedRows };
+    return paginatedRows;
   }
 }
 export default ListService;

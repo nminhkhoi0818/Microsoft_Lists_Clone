@@ -1,4 +1,9 @@
 export const FILE_PATHS = {
-  TEMPLATES: "../data/templates.json",
   LISTS: "../data/lists.json",
+  TEMPLATES: "../data/templates.json",
+};
+
+export const DEFAULT_COLUMNS = {
+  NAME: "Title",
+  TYPE: "Text",
 };
