@@ -27,10 +27,6 @@ export class ListController {
     }
   }
 
-  getTemplates(req, res) {
-    res.json(this.listService.templates);
-  }
-
   getAllLists(req, res) {
     res.json(this.listService.lists);
   }
@@ -41,6 +37,17 @@ export class ListController {
       const { search, sort, page, pageSize } = req.query;
 
       res.json(this.listService.getList(listId, search, sort, page, pageSize));
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  updateList(req, res) {
+    try {
+      const listId = req.params.listId;
+      const { name } = req.body;
+      this.listService.updateList(listId, name);
+      res.status(200).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -66,6 +73,18 @@ export class ListController {
     }
   }
 
+  updateColumn(req, res) {
+    try {
+      const listId = req.params.listId;
+      const columnId = req.params.columnId;
+      const { name, type } = req.body;
+      this.listService.updateColumn(listId, columnId, name, type);
+      res.status(200).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   deleteColumn(req, res) {
     try {
       const listId = req.params.listId;
@@ -83,6 +102,18 @@ export class ListController {
       const { data } = req.body;
       this.listService.addRow(listId, data);
       res.status(201).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  updateRow(req, res) {
+    try {
+      const listId = req.params.listId;
+      const rowId = req.params.rowId;
+      const { data } = req.body;
+      this.listService.updateRow(listId, rowId, data);
+      res.status(200).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

@@ -25,6 +25,17 @@ export class TemplateController {
     }
   }
 
+  updateTemplate(req, res) {
+    try {
+      const templateId = req.params.templateId;
+      const { name, columns, rows } = req.body;
+      this.templateService.updateTemplate(templateId, name, columns, rows);
+      res.status(200).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
   deleteTemplate(req, res) {
     try {
       const templateId = req.params.templateId;

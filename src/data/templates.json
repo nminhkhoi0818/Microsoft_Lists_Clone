@@ -1,93 +1,317 @@
 {
   "lists": [
     {
+      "id": "26f02ae3-8a9e-41a4-8ac5-b96f6906a1a0",
       "name": "Template tracker",
-      "description": "A template for tracking people",
       "columns": [
-        { "type": "Text", "name": "Full Name" },
-        { "type": "Number", "name": "Age" },
-        { "type": "Yes/No", "name": "Is Active" }
+        {
+          "id": "77b97566-923d-4c36-9351-1a4771b42017",
+          "name": "Full Name",
+          "type": "Text",
+          "isHidden": false,
+          "value": ""
+        },
+        {
+          "id": "e6a49f2e-4813-479b-b65e-245c34368a24",
+          "name": "Age",
+          "type": "Number",
+          "isHidden": false,
+          "value": 0
+        },
+        {
+          "id": "07159c26-7418-43fd-8c28-b19d5a9330ca",
+          "name": "Is Active",
+          "type": "Yes/No",
+          "isHidden": false,
+          "value": false
+        }
       ],
       "rows": [
         {
+          "id": "27f8c0e8-0077-40fc-81b8-ab5812e51133",
           "columns": [
-            { "type": "Text", "name": "Full Name", "value": "John Doe" },
-            { "type": "Number", "name": "Age", "value": 30 },
-            { "type": "Yes/No", "name": "Is Active", "value": true }
+            {
+              "id": "fa6194b7-023d-4c7f-8b82-f02b80343f6a",
+              "name": "Full Name",
+              "type": "Text",
+              "isHidden": false,
+              "value": "John Doe"
+            },
+            {
+              "id": "cc2ba54b-fe1a-4ac3-8bf0-ece69c6e009a",
+              "name": "Age",
+              "type": "Number",
+              "isHidden": false,
+              "value": 30
+            },
+            {
+              "id": "4a20a59c-2ef0-431f-97b8-e6b7831086bb",
+              "name": "Is Active",
+              "type": "Yes/No",
+              "isHidden": false,
+              "value": true
+            }
           ]
         },
         {
+          "id": "71e81617-d854-4464-a74e-1b3be9bc413a",
           "columns": [
-            { "type": "Text", "name": "Full Name", "value": "Jane Doe" },
-            { "type": "Number", "name": "Age", "value": 25 },
-            { "type": "Yes/No", "name": "Is Active", "value": false }
+            {
+              "id": "94586caf-93b8-4441-96ec-fd59d5532fa3",
+              "name": "Full Name",
+              "type": "Text",
+              "isHidden": false,
+              "value": "Jane Doe"
+            },
+            {
+              "id": "08081fea-d3d7-470f-a40b-bfc30d78750f",
+              "name": "Age",
+              "type": "Number",
+              "isHidden": false,
+              "value": 25
+            },
+            {
+              "id": "a4675134-6c61-4fa9-bcab-0e35b86ea6f2",
+              "name": "Is Active",
+              "type": "Yes/No",
+              "isHidden": false,
+              "value": false
+            }
           ]
         }
       ]
     },
     {
+      "id": "0d4a5c74-69c0-4c32-99a1-d2d78440aad7",
       "name": "Task tracker",
-      "description": "A template for tracking tasks",
       "columns": [
-        { "type": "Text", "name": "Task Name" },
-        { "type": "Date", "name": "Due Date" },
-        { "type": "Yes/No", "name": "Completed" },
         {
-          "type": "Choice",
+          "id": "80ea3b01-a818-4825-8713-93221cd0048d",
+          "name": "Task Name",
+          "type": "Text",
+          "isHidden": false,
+          "value": ""
+        },
+        {
+          "id": "6417b1ae-3b13-4649-bb20-fb0bf4332f29",
+          "name": "Due Date",
+          "type": "Date",
+          "isHidden": false,
+          "value": "2024-07-29T02:44:19.175Z"
+        },
+        {
+          "id": "f03fd5a8-bcd5-4ad6-ac3b-db9860e47317",
+          "name": "Completed",
+          "type": "Yes/No",
+          "isHidden": false,
+          "value": false
+        },
+        {
+          "id": "c1b4c6ad-4ced-4537-af4e-e3a7bcef1af7",
           "name": "Priority",
-          "choices": ["High", "Medium", "Low"]
+          "type": "Choice",
+          "isHidden": false,
+          "selectionType": "Single",
+          "options": []
         }
       ],
       "rows": [
         {
+          "id": "61d14dcc-dda6-41ae-bb9f-1de2b19d5051",
           "columns": [
-            { "type": "Text", "name": "Task Name", "value": "Task 1" },
-            { "type": "Date", "name": "Due Date", "value": "2021-01-01" },
-            { "type": "Yes/No", "name": "Completed", "value": false },
-            { "type": "Choice", "name": "Priority", "value": "High" }
+            {
+              "id": "6ed4fc1c-9ab4-419d-ae5e-122d3a5b9b71",
+              "name": "Task Name",
+              "type": "Text",
+              "isHidden": false,
+              "value": "Task 1"
+            },
+            {
+              "id": "47d8ca4c-2c1f-4a85-a33a-f89a3805a3a5",
+              "name": "Due Date",
+              "type": "Date",
+              "isHidden": false,
+              "value": "2021-01-01"
+            },
+            {
+              "id": "e09aff18-1d58-4c8d-b744-9792c5587e6d",
+              "name": "Completed",
+              "type": "Yes/No",
+              "isHidden": false,
+              "value": false
+            },
+            {
+              "id": "16b8369d-b249-4542-bdce-617fcd6ece94",
+              "name": "Priority",
+              "type": "Choice",
+              "isHidden": false,
+              "selectionType": "Single",
+              "options": [],
+              "value": "High"
+            }
           ]
         },
         {
+          "id": "c4486196-4294-41a8-82cb-c160f6e9094a",
           "columns": [
-            { "type": "Text", "name": "Task Name", "value": "Task 2" },
-            { "type": "Date", "name": "Due Date", "value": "2021-02-01" },
-            { "type": "Yes/No", "name": "Completed", "value": true },
-            { "type": "Choice", "name": "Priority", "value": "Medium" }
+            {
+              "id": "81f2d352-6d47-4f32-9b3f-36801c89585c",
+              "name": "Task Name",
+              "type": "Text",
+              "isHidden": false,
+              "value": "Task 2"
+            },
+            {
+              "id": "0dd7b9c9-cb1d-4669-baea-96258ac0c69e",
+              "name": "Due Date",
+              "type": "Date",
+              "isHidden": false,
+              "value": "2021-02-01"
+            },
+            {
+              "id": "8e45fd9e-b8fd-4198-bd4a-c9bc78776c3d",
+              "name": "Completed",
+              "type": "Yes/No",
+              "isHidden": false,
+              "value": true
+            },
+            {
+              "id": "3a9b6773-0044-417b-a2d7-e256d8224ba0",
+              "name": "Priority",
+              "type": "Choice",
+              "isHidden": false,
+              "selectionType": "Single",
+              "options": [],
+              "value": "Medium"
+            }
           ]
         }
       ]
     },
     {
+      "id": "4cc9406a-3521-4e0a-8cd6-675c72b3c92c",
       "name": "Project tracker",
-      "description": "A template for tracking projects",
       "columns": [
-        { "type": "Text", "name": "Project Name" },
-        { "type": "Date", "name": "Start Date" },
-        { "type": "Date", "name": "End Date" },
-        { "type": "Number", "name": "Budget" },
         {
-          "type": "Choice",
+          "id": "19bd22c4-b87e-4c83-b1b1-f41eca8d732a",
+          "name": "Project Name",
+          "type": "Text",
+          "isHidden": false,
+          "value": ""
+        },
+        {
+          "id": "36178933-2478-4086-896e-972e5aaed56f",
+          "name": "Start Date",
+          "type": "Date",
+          "isHidden": false,
+          "value": "2024-07-29T02:44:19.175Z"
+        },
+        {
+          "id": "75c14d45-08a0-426f-ace5-1c3d67dceeff",
+          "name": "End Date",
+          "type": "Date",
+          "isHidden": false,
+          "value": "2024-07-29T02:44:19.175Z"
+        },
+        {
+          "id": "8329472f-8d43-42de-a3d4-7b2d9bcaa10c",
+          "name": "Budget",
+          "type": "Number",
+          "isHidden": false,
+          "value": 0
+        },
+        {
+          "id": "ac678306-8c48-4197-bb7d-9a3b07ff6837",
           "name": "Status",
-          "choices": ["Pending", "In Progress", "Completed"]
+          "type": "Choice",
+          "isHidden": false,
+          "selectionType": "Single",
+          "options": []
         }
       ],
       "rows": [
         {
+          "id": "0b3d5112-f525-494e-92c9-15197d77afe3",
           "columns": [
-            { "type": "Text", "name": "Project Name", "value": "Project 1" },
-            { "type": "Date", "name": "Start Date", "value": "2021-01-01" },
-            { "type": "Date", "name": "End Date", "value": "2021-03-01" },
-            { "type": "Number", "name": "Budget", "value": 10000 },
-            { "type": "Choice", "name": "Status", "value": "In Progress" }
+            {
+              "id": "7cf1d32c-0251-4227-b0f1-9d9255ca9e00",
+              "name": "Project Name",
+              "type": "Text",
+              "isHidden": false,
+              "value": "Project 1"
+            },
+            {
+              "id": "aa83d3bc-4319-4f87-b061-fa93c3a90528",
+              "name": "Start Date",
+              "type": "Date",
+              "isHidden": false,
+              "value": "2021-01-01"
+            },
+            {
+              "id": "716cce62-bd3c-4a6a-97f6-0176277468f3",
+              "name": "End Date",
+              "type": "Date",
+              "isHidden": false,
+              "value": "2021-03-01"
+            },
+            {
+              "id": "356d174b-b690-4967-aa84-18267cee5b98",
+              "name": "Budget",
+              "type": "Number",
+              "isHidden": false,
+              "value": 10000
+            },
+            {
+              "id": "5d8aa87f-0967-44d8-a39a-b493a2720081",
+              "name": "Status",
+              "type": "Choice",
+              "isHidden": false,
+              "selectionType": "Single",
+              "options": [],
+              "value": "In Progress"
+            }
           ]
         },
         {
+          "id": "3dbd5aca-93c1-422d-8671-29097046a06b",
           "columns": [
-            { "type": "Text", "name": "Project Name", "value": "Project 2" },
-            { "type": "Date", "name": "Start Date", "value": "2021-02-01" },
-            { "type": "Date", "name": "End Date", "value": "2021-04-01" },
-            { "type": "Number", "name": "Budget", "value": 20000 },
-            { "type": "Choice", "name": "Status", "value": "Pending" }
+            {
+              "id": "1a8f8e6f-667f-4994-9db3-9226a9434e73",
+              "name": "Project Name",
+              "type": "Text",
+              "isHidden": false,
+              "value": "Project 2"
+            },
+            {
+              "id": "97397786-1055-4429-a21a-efdade3a3d06",
+              "name": "Start Date",
+              "type": "Date",
+              "isHidden": false,
+              "value": "2021-02-01"
+            },
+            {
+              "id": "d31d1810-b458-4fb1-8d51-d826cd578b86",
+              "name": "End Date",
+              "type": "Date",
+              "isHidden": false,
+              "value": "2021-04-01"
+            },
+            {
+              "id": "c3a7d0de-bb54-4c8b-af12-63c0cb77180d",
+              "name": "Budget",
+              "type": "Number",
+              "isHidden": false,
+              "value": 20000
+            },
+            {
+              "id": "7e82fd61-4974-49d0-8643-8d6d312c6fe7",
+              "name": "Status",
+              "type": "Choice",
+              "isHidden": false,
+              "selectionType": "Single",
+              "options": [],
+              "value": "Pending"
+            }
           ]
         }
       ]

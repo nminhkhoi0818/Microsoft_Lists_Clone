@@ -8,8 +8,8 @@ class Template {
   columns: Column[];
   rows: Row[];
 
-  constructor(name: string, columns: Column[], rows: Row[]) {
-    this.id = uuidv4();
+  constructor(name: string, columns: Column[], rows: Row[], id?: string) {
+    this.id = id ?? uuidv4();
     this.name = name;
     this.columns = columns;
     this.rows = rows;

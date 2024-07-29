@@ -1,22 +1,19 @@
 import fs from "fs";
-import Template from "../models/Template";
 import List from "../models/List";
 import { ChoiceColumn, TextColumn } from "../models/Column";
 import { ColumnFactory, Row } from "../models/Row";
 import path from "path";
 import { FILE_PATHS } from "../config/default";
 import { EnumColumnType } from "../models/Enum";
+import TemplateService from "./templateService";
 
 class ListService {
   lists: List[];
-  templates: Template[];
   listPath = path.resolve(__dirname, FILE_PATHS.LISTS);
   templatePath = path.resolve(__dirname, FILE_PATHS.TEMPLATES);
 
   constructor() {
     this.lists = [];
-    this.templates = [];
-    this.loadTemplates();
     this.loadLists();
   }
 
@@ -34,11 +31,8 @@ class ListService {
   }
 
   createFromTemplate(name: string, templateId: string) {
-    if (this.templates.find((template) => template.id === templateId)) {
-      throw new Error("Template not found");
-    }
-
-    const template = this.templates.find(
+    let templateService = new TemplateService();
+    const template = templateService.templates.find(
       (template) => template.id === templateId
     );
 
@@ -48,22 +42,6 @@ class ListService {
 
     this.saveLists(this.listPath);
     return list;
-  }
-
-  loadTemplates() {
-    const jsonData = fs.readFileSync(this.templatePath, "utf-8");
-    const data = JSON.parse(jsonData);
-
-    data.lists.forEach((item: any) => {
-      const newTemplate = new Template(
-        item.name,
-        item.columns.map((columnData: any) => {
-          return ColumnFactory.loadColumn(columnData);
-        }),
-        this.parseRows(item.rows)
-      );
-      this.templates.push(newTemplate);
-    });
   }
 
   loadLists() {
@@ -100,6 +78,16 @@ class ListService {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   }
 
+  updateList(listId: string, name: string) {
+    const list = this.lists.find((list) => list.id === listId);
+    if (!list) {
+      throw new Error("List not found");
+    }
+
+    list.name = name;
+    this.saveLists(this.listPath);
+  }
+
   deleteList(listId: string) {
     if (!this.lists.find((list) => list.id === listId)) {
       throw new Error("List not found");
@@ -128,6 +116,18 @@ class ListService {
     this.saveLists(this.listPath);
   }
 
+  updateColumn(listId: string, columnId: string, name: string, type: string) {
+    const list = this.getListById(listId);
+    const column = list.columns.find((col) => col.id === columnId);
+    if (!column) {
+      throw new Error("Column not found");
+    }
+
+    column.name = name;
+    // column.type = type;
+    this.saveLists(this.listPath);
+  }
+
   deleteColumn(listId: string, columnId: string) {
     const list = this.getListById(listId);
     const column = list.columns.find((col) => col.id === columnId);
@@ -150,6 +150,22 @@ class ListService {
       });
     });
     list.rows.push(row);
+    this.saveLists(this.listPath);
+  }
+
+  updateRow(listId: string, rowId: string, data: any) {
+    const list = this.getListById(listId);
+    const row = list.rows.find((row) => row.id === rowId);
+    if (!row) {
+      throw new Error("Row not found");
+    }
+
+    data.forEach((colData) => {
+      Object.keys(colData).forEach((colName) => {
+        row.setValueCol(colName, colData[colName]);
+      });
+    });
+
     this.saveLists(this.listPath);
   }
 

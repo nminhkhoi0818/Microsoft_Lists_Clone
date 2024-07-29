@@ -94,6 +94,62 @@ router.post("/", (req, res) => {
 
 /**
  * @swagger
+ * /api/lists/from-template:
+ *   post:
+ *     summary: Create a new list from a template
+ *     tags: [List]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               templateId:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: List created
+ */
+router.post("/from-template", (req, res) => {
+  listController.createFromTemplate(req, res);
+});
+
+/**
+ * @swagger
+ * /api/lists/{listId}:
+ *   put:
+ *     summary: Update a list
+ *     tags: [List]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: List updated
+ *       400:
+ *         description: Bad request
+ */
+router.put("/:listId", (req, res) => {
+  listController.updateList(req, res);
+});
+
+/**
+ * @swagger
  * /api/lists/{listId}:
  *   delete:
  *     summary: Delete a list
@@ -142,6 +198,44 @@ router.delete("/:listId", (req, res) => {
  */
 router.post("/:listId/columns", (req, res) => {
   listController.addColumn(req, res);
+});
+
+/**
+ * @swagger
+ * /api/lists/{listId}/columns/{columnId}:
+ *   put:
+ *     summary: Update a column in a list
+ *     tags: [Column]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: columnId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               type:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Column updated
+ *       400:
+ *         description: Bad request
+ */
+router.put("/:listId/columns/:columnId", (req, res) => {
+  listController.updateColumn(req, res);
 });
 
 /**
@@ -196,6 +290,42 @@ router.delete("/:listId/columns/:columnId", (req, res) => {
  */
 router.post("/:listId/rows", (req, res) => {
   listController.addRow(req, res);
+});
+
+/**
+ * @swagger
+ * /api/lists/{listId}/rows/{rowId}:
+ *   put:
+ *     summary: Update a row in a list
+ *     tags: [Row]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: rowId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               data:
+ *                 type: object
+ *     responses:
+ *       200:
+ *         description: Row updated
+ *       400:
+ *         description: Bad request
+ */
+router.put("/:listId/rows/:rowId", (req, res) => {
+  listController.updateRow(req, res);
 });
 
 /**
