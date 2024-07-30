@@ -10,30 +10,35 @@ import Template from "../models/Template";
 class ListService {
   lists: List[] = [];
   templates: Template[] = [];
+  listPath: string = path.resolve(__dirname, FILE_PATHS.LISTS);
+  templatePath: string = path.resolve(__dirname, FILE_PATHS.TEMPLATES);
 
   createList(name: string) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
+    this.ensureListDoesNotExist(name);
 
     let newList = new List(name);
     newList.addColumn(new TextColumn(DEFAULT_COLUMNS.NAME));
     this.lists.push(newList);
 
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.saveLists(this.listPath);
     return newList;
   }
 
   createFromTemplate(name: string, templateId: string) {
-    this.loadTemplates(path.resolve(__dirname, FILE_PATHS.TEMPLATES));
+    this.loadTemplates(this.templatePath);
     const template = this.templates.find(
       (template) => template.id === templateId
     );
 
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
+    this.ensureListDoesNotExist(name);
+
     let list = new List(name);
     list.columns = template!.columns;
     this.lists.push(list);
 
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.saveLists(this.listPath);
     return list;
   }
 
@@ -96,37 +101,33 @@ class ListService {
   }
 
   getAllLists() {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
     return this.lists;
   }
 
   getAllTemplates() {
-    this.loadTemplates(path.resolve(__dirname, FILE_PATHS.TEMPLATES));
+    this.loadTemplates(this.listPath);
     return this.templates;
   }
 
   updateList(listId: string, name: string) {
     const list = this.lists.find((list) => list.id === listId);
-    if (!list) {
-      throw new Error("List not found");
-    }
+    this.ensureListExists(listId);
 
-    list.name = name;
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    list!.name = name;
+    this.saveLists(this.listPath);
   }
 
   deleteList(listId: string) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
-    if (!this.lists.find((list) => list.id === listId)) {
-      throw new Error("List not found");
-    }
+    this.loadLists(this.listPath);
+    this.ensureListExists(listId);
 
     this.lists = this.lists.filter((list) => list.id !== listId);
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.saveLists(this.listPath);
   }
 
   getListById(listId: string) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
     const list = this.lists.find((list) => list.id === listId);
     if (!list) throw new Error("List not found");
 
@@ -134,17 +135,15 @@ class ListService {
   }
 
   addColumn(listId: string, data: any) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
     const list = this.getListById(listId);
 
     const { name } = data;
-    if (list.columns.find((col) => col.name === name)) {
-      throw new Error("Column already exists");
-    }
+    this.ensureColumnDoesNotExist(listId, name);
 
     const column = ColumnFactory.createColumn(data);
     list.addColumn(column);
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.saveLists(this.listPath);
   }
 
   updateColumn(
@@ -160,13 +159,19 @@ class ListService {
       throw new Error("Column not found");
     }
 
+    list.rows.forEach((row) => {
+      const col = row.columns.find((col) => col.name === column?.name);
+      col!.name = name;
+      col!.type = type;
+    });
+
     column.name = name;
     column.type = type;
     this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
   }
 
   deleteColumn(listId: string, columnId: string) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
 
     const list = this.getListById(listId);
     const column = list.columns.find((col) => col.id === columnId);
@@ -176,11 +181,11 @@ class ListService {
       row.columns = row.columns.filter((col) => col.name !== column?.name);
     });
 
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.saveLists(this.listPath);
   }
 
   addRow(listId: string, data: any) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
 
     const list = this.getListById(listId);
     const row: Row = new Row(list.columns);
@@ -191,11 +196,11 @@ class ListService {
       });
     });
     list.rows.push(row);
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.saveLists(this.listPath);
   }
 
   updateRow(listId: string, rowId: string, data: any) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
 
     const list = this.getListById(listId);
     const row = list.rows.find((row) => row.id === rowId);
@@ -209,20 +214,20 @@ class ListService {
       });
     });
 
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.saveLists(this.listPath);
   }
 
   deleteRow(listId: string, rowId: string) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
 
     const list = this.getListById(listId);
     list.rows = list.rows.filter((row) => row.id !== rowId);
 
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.saveLists(this.listPath);
   }
 
   addOption(listId: string, columnId: string, option: string) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
     const list = this.getListById(listId);
     const column = list.columns.find(
       (col) => col.id === columnId
@@ -237,7 +242,7 @@ class ListService {
     }
 
     column.addOption(option);
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.saveLists(this.listPath);
   }
 
   getRows(
@@ -247,7 +252,7 @@ class ListService {
     page: number,
     pageSize: number
   ) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+    this.loadLists(this.listPath);
     const list = this.getListById(listId);
     let rows = [...list.rows];
 
@@ -269,11 +274,50 @@ class ListService {
       });
     }
 
+    return this.paginateRows(rows, page, pageSize);
+  }
+
+  filterRows(
+    listId: string,
+    column: string,
+    value: string[],
+    page: number,
+    pageSize: number
+  ) {
+    this.loadLists(this.listPath);
+    const list = this.getListById(listId);
+
+    let rows = [...list.rows];
+    rows = rows.filter((row) => {
+      return value.includes(row.getValueCol(column));
+    });
+
+    return this.paginateRows(rows, page, pageSize);
+  }
+
+  paginateRows(rows: Row[], page: number, pageSize: number) {
     const start = (page - 1) * pageSize;
     const end = start + pageSize;
-    const paginatedRows = rows.slice(start, end);
+    return rows.slice(start, end);
+  }
 
-    return paginatedRows;
+  ensureListDoesNotExist(name: string) {
+    if (this.lists.find((list) => list.name === name)) {
+      throw new Error("List already exists");
+    }
+  }
+
+  ensureListExists(listId: string) {
+    if (!this.lists.find((list) => list.id === listId)) {
+      throw new Error("List not found");
+    }
+  }
+
+  ensureColumnDoesNotExist(listId: string, name: string) {
+    const list = this.getListById(listId);
+    if (list.columns.find((col) => col.name === name)) {
+      throw new Error("Column already exists");
+    }
   }
 }
 

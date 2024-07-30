@@ -38,7 +38,7 @@
           "columns": [
             {
               "id": "e8c8eb03-7ee1-4dad-9505-ebce6e073042",
-              "name": "Title",
+              "name": "Full Name",
               "type": "Text",
               "isHidden": false,
               "value": "John Doe"
@@ -70,7 +70,7 @@
           "columns": [
             {
               "id": "6bf902fd-3260-4e80-8c62-ce7f7f4e68c0",
-              "name": "Title",
+              "name": "Full Name",
               "type": "Text",
               "isHidden": false,
               "value": "Jane Doe"

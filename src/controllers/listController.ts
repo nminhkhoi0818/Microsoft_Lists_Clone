@@ -1,3 +1,4 @@
+import { Request, Response } from "express";
 import ListService from "../services/listService";
 
 export class ListController {
@@ -7,7 +8,7 @@ export class ListController {
     this.listService = listService;
   }
 
-  createList(req, res) {
+  createList(req: Request, res: Response) {
     try {
       const { name } = req.body;
       const newList = this.listService.createList(name);
@@ -17,7 +18,7 @@ export class ListController {
     }
   }
 
-  createFromTemplate(req, res) {
+  createFromTemplate(req: Request, res: Response) {
     try {
       const { name, templateId } = req.body;
       const newList = this.listService.createFromTemplate(name, templateId);
@@ -27,7 +28,7 @@ export class ListController {
     }
   }
 
-  getAllLists(req, res) {
+  getAllLists(req: Request, res: Response) {
     try {
       const lists = this.listService.getAllLists();
       res.json(lists);
@@ -36,7 +37,7 @@ export class ListController {
     }
   }
 
-  getAllTemplates(req, res) {
+  getAllTemplates(req: Request, res: Response) {
     try {
       const templates = this.listService.getAllTemplates();
       res.json(templates);
@@ -45,9 +46,9 @@ export class ListController {
     }
   }
 
-  getListById(req, res) {
+  getListById(req: Request, res: Response) {
     try {
-      const listId = req.params.listId;
+      const { listId } = req.params;
       const list = this.listService.getListById(listId);
       res.json(list);
     } catch (error: any) {
@@ -55,10 +56,13 @@ export class ListController {
     }
   }
 
-  getRows(req, res) {
+  getRows(req: Request, res: Response) {
     try {
       const { listId } = req.params;
-      const { search, sort, page, pageSize } = req.query;
+      const search = req.query.search as string;
+      const sort = req.query.sort as string;
+      const page = parseInt(req.query.page as string);
+      const pageSize = parseInt(req.query.pageSize as string);
 
       res.json(this.listService.getRows(listId, search, sort, page, pageSize));
     } catch (error: any) {
@@ -66,7 +70,7 @@ export class ListController {
     }
   }
 
-  updateList(req, res) {
+  updateList(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const { name } = req.body;
@@ -77,7 +81,7 @@ export class ListController {
     }
   }
 
-  deleteList(req, res) {
+  deleteList(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       this.listService.deleteList(listId);
@@ -87,7 +91,7 @@ export class ListController {
     }
   }
 
-  addColumn(req, res) {
+  addColumn(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       this.listService.addColumn(listId, req.body);
@@ -97,7 +101,7 @@ export class ListController {
     }
   }
 
-  updateColumn(req, res) {
+  updateColumn(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const columnId = req.params.columnId;
@@ -109,7 +113,7 @@ export class ListController {
     }
   }
 
-  deleteColumn(req, res) {
+  deleteColumn(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const columnId = req.params.columnId;
@@ -120,7 +124,7 @@ export class ListController {
     }
   }
 
-  addRow(req, res) {
+  addRow(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const { data } = req.body;
@@ -131,7 +135,23 @@ export class ListController {
     }
   }
 
-  updateRow(req, res) {
+  filterRows(req: Request, res: Response) {
+    try {
+      const listId = req.params.listId;
+      const column = req.query.column as string;
+      const value = req.query.value as string[];
+      const page = parseInt(req.query.page as string);
+      const pageSize = parseInt(req.query.pageSize as string);
+
+      res.json(
+        this.listService.filterRows(listId, column, value, page, pageSize)
+      );
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  updateRow(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const rowId = req.params.rowId;
@@ -143,7 +163,7 @@ export class ListController {
     }
   }
 
-  deleteRow(req, res) {
+  deleteRow(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const rowId = req.params.rowId;
@@ -154,7 +174,7 @@ export class ListController {
     }
   }
 
-  addOption(req, res) {
+  addOption(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const columnId = req.params.columnId;
@@ -164,9 +184,5 @@ export class ListController {
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
-  }
-
-  getTemplates(req, res) {
-    res.json(this.listService.templates);
   }
 }

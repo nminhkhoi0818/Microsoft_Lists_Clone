@@ -11,6 +11,9 @@ const options = {
       {
         url: "http://localhost:3000",
       },
+      {
+        url: "https://microsoft-lists-clone.onrender.com",
+      },
     ],
   },
   apis: ["./src/routes/*.ts"],

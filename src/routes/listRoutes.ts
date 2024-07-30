@@ -54,6 +54,10 @@ router.post("/:listId/rows", (req, res) => {
   listController.addRow(req, res);
 });
 
+router.get("/:listId/rows/filter", (req, res) => {
+  listController.filterRows(req, res);
+});
+
 router.put("/:listId/rows/:rowId", (req, res) => {
   listController.updateRow(req, res);
 });
@@ -286,7 +290,7 @@ router.post("/:listId/columns/:columnId/options", (req, res) => {
  * @swagger
  * /api/lists/{listId}/rows:
  *   get:
- *     summary: Get paginated rows from a list
+ *     summary: Get rows from a list
  *     tags: [Row]
  *     parameters:
  *       - in: path
@@ -305,6 +309,50 @@ router.post("/:listId/columns/:columnId/options", (req, res) => {
  *         schema:
  *           type: string
  *         description: The field to sort by (e.g., 'Title', 'Date')
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of rows per page
+ *     responses:
+ *       200:
+ *         description: The list with the specified ID
+ *       404:
+ *         description: List not found
+ *       400:
+ *         description: Bad request
+ */
+
+/**
+ * @swagger
+ * /api/lists/{listId}/rows/filter:
+ *   get:
+ *     summary: Get filtered rows from a list
+ *     tags: [Row]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the list to retrieve
+ *       - in: query
+ *         name: column
+ *         schema:
+ *           type: string
+ *           description: The column to filter by
+ *       - in: query
+ *         name: value
+ *         schema:
+ *           type: array
+ *           description: The value to filter by
  *       - in: query
  *         name: page
  *         schema:
