@@ -45,6 +45,16 @@ export class ListController {
     }
   }
 
+  getListById(req, res) {
+    try {
+      const listId = req.params.listId;
+      const list = this.listService.getListById(listId);
+      res.json(list);
+    } catch (error: any) {
+      res.status(404).json({ error: error.message });
+    }
+  }
+
   getRows(req, res) {
     try {
       const { listId } = req.params;

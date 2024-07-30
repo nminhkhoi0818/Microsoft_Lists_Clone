@@ -5,6 +5,9 @@ import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./swagger";
 
 const app = express();
+
+app.disable("x-powered-by");
+
 app.use(bodyParser.json());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

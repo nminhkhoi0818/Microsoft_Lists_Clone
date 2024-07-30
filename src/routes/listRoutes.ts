@@ -14,6 +14,10 @@ router.get("/templates", (req, res) => {
   listController.getAllTemplates(req, res);
 });
 
+router.get("/:listId", (req, res) => {
+  listController.getListById(req, res);
+});
+
 router.post("/", (req, res) => {
   listController.createList(req, res);
 });
@@ -73,6 +77,24 @@ router.post("/:listId/columns/:columnId/options", (req, res) => {
  *         description: A list of all lists
  *       400:
  *         description: Bad request
+ */
+
+/**
+ * @swagger
+ * /api/lists/{listId}:
+ *   get:
+ *     summary: Get a list by its ID
+ *     tags: [List]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the list
+ *     responses:
+ *       200:
+ *         description: The list with the specified ID
  */
 
 /**

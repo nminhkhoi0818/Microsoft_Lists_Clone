@@ -8,20 +8,11 @@ import { EnumColumnType } from "../models/Enum";
 import Template from "../models/Template";
 
 class ListService {
-  lists: List[];
-  templates: Template[];
-
-  constructor() {
-    this.lists = [];
-    this.templates = [];
-  }
+  lists: List[] = [];
+  templates: Template[] = [];
 
   createList(name: string) {
     this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
-
-    if (this.lists.find((list) => list.name === name)) {
-      throw new Error("List already exists");
-    }
 
     let newList = new List(name);
     newList.addColumn(new TextColumn(DEFAULT_COLUMNS.NAME));
@@ -278,8 +269,6 @@ class ListService {
       });
     }
 
-    const totalRows = rows.length;
-    const totalPages = Math.ceil(totalRows / pageSize);
     const start = (page - 1) * pageSize;
     const end = start + pageSize;
     const paginatedRows = rows.slice(start, end);
@@ -287,4 +276,5 @@ class ListService {
     return paginatedRows;
   }
 }
+
 export default ListService;
