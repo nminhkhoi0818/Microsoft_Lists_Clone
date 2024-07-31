@@ -6,6 +6,7 @@ import path from "path";
 import { DEFAULT_COLUMNS, FILE_PATHS } from "../config/default";
 import { EnumColumnType } from "../models/Enum";
 import Template from "../models/Template";
+import Common from "../utils/Common";
 
 class ListService {
   lists: List[] = [];
@@ -15,7 +16,7 @@ class ListService {
 
   createList(name: string) {
     this.loadLists(this.listPath);
-    this.ensureListDoesNotExist(name);
+    Common.ensureListDoesNotExist(this.lists, name);
 
     let newList = new List(name);
     newList.addColumn(new TextColumn(DEFAULT_COLUMNS.NAME));
@@ -32,7 +33,7 @@ class ListService {
     );
 
     this.loadLists(this.listPath);
-    this.ensureListDoesNotExist(name);
+    Common.ensureListDoesNotExist(this.lists, name);
 
     let list = new List(name);
     list.columns = template!.columns;
@@ -56,7 +57,7 @@ class ListService {
         return list;
       });
     } catch (error) {
-      console.log("Error loading lists", error);
+      throw new Error("Error loading lists");
     }
   }
 
@@ -77,7 +78,7 @@ class ListService {
         this.templates.push(newTemplate);
       });
     } catch (error) {
-      console.log("Error loading templates", error);
+      throw new Error("Error loading templates");
     }
   }
 
@@ -110,36 +111,25 @@ class ListService {
     return this.templates;
   }
 
-  updateList(listId: string, name: string) {
-    const list = this.lists.find((list) => list.id === listId);
-    this.ensureListExists(listId);
-
-    list!.name = name;
-    this.saveLists(this.listPath);
+  getListById(listId: string) {
+    this.loadLists(this.listPath);
+    return Common.getListById(this.lists, listId);
   }
 
   deleteList(listId: string) {
     this.loadLists(this.listPath);
-    this.ensureListExists(listId);
+    Common.ensureListExists(this.lists, listId);
 
     this.lists = this.lists.filter((list) => list.id !== listId);
     this.saveLists(this.listPath);
   }
 
-  getListById(listId: string) {
-    this.loadLists(this.listPath);
-    const list = this.lists.find((list) => list.id === listId);
-    if (!list) throw new Error("List not found");
-
-    return list;
-  }
-
   addColumn(listId: string, data: any) {
     this.loadLists(this.listPath);
-    const list = this.getListById(listId);
+    const list = Common.getListById(this.lists, listId);
 
     const { name } = data;
-    this.ensureColumnDoesNotExist(listId, name);
+    Common.ensureColumnDoesNotExist(list, name);
 
     const column = ColumnFactory.createColumn(data);
     list.addColumn(column);
@@ -153,16 +143,13 @@ class ListService {
     type: EnumColumnType
   ) {
     this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
-    const list = this.getListById(listId);
-    const column = list.columns.find((col) => col.id === columnId);
-    if (!column) {
-      throw new Error("Column not found");
-    }
+    const list = Common.getListById(this.lists, listId);
+    const column = Common.getColumnById(list, columnId);
 
     list.rows.forEach((row) => {
-      const col = row.columns.find((col) => col.name === column?.name);
-      col!.name = name;
-      col!.type = type;
+      const col = Common.findColumnInRow(row, columnId);
+      col.name = name;
+      col.type = type;
     });
 
     column.name = name;
@@ -173,8 +160,8 @@ class ListService {
   deleteColumn(listId: string, columnId: string) {
     this.loadLists(this.listPath);
 
-    const list = this.getListById(listId);
-    const column = list.columns.find((col) => col.id === columnId);
+    const list = Common.getListById(this.lists, listId);
+    const column = Common.getColumnById(list, columnId);
 
     list.columns = list.columns.filter((col) => col.id !== columnId);
     list.rows.forEach((row) => {
@@ -187,7 +174,7 @@ class ListService {
   addRow(listId: string, data: any) {
     this.loadLists(this.listPath);
 
-    const list = this.getListById(listId);
+    const list = Common.getListById(this.lists, listId);
     const row: Row = new Row(list.columns);
 
     data.forEach((colData) => {
@@ -202,11 +189,8 @@ class ListService {
   updateRow(listId: string, rowId: string, data: any) {
     this.loadLists(this.listPath);
 
-    const list = this.getListById(listId);
-    const row = list.rows.find((row) => row.id === rowId);
-    if (!row) {
-      throw new Error("Row not found");
-    }
+    const list = Common.getListById(this.lists, listId);
+    const row = Common.getRowById(list, rowId);
 
     data.forEach((colData) => {
       Object.keys(colData).forEach((colName) => {
@@ -220,7 +204,7 @@ class ListService {
   deleteRow(listId: string, rowId: string) {
     this.loadLists(this.listPath);
 
-    const list = this.getListById(listId);
+    const list = Common.getListById(this.lists, listId);
     list.rows = list.rows.filter((row) => row.id !== rowId);
 
     this.saveLists(this.listPath);
@@ -228,7 +212,8 @@ class ListService {
 
   addOption(listId: string, columnId: string, option: string) {
     this.loadLists(this.listPath);
-    const list = this.getListById(listId);
+
+    const list = Common.getListById(this.lists, listId);
     const column = list.columns.find(
       (col) => col.id === columnId
     ) as ChoiceColumn;
@@ -253,7 +238,8 @@ class ListService {
     pageSize: number
   ) {
     this.loadLists(this.listPath);
-    const list = this.getListById(listId);
+
+    const list = Common.getListById(this.lists, listId);
     let rows = [...list.rows];
 
     if (search) {
@@ -265,10 +251,7 @@ class ListService {
     }
 
     if (sort) {
-      const column = list.getColumn(sort);
-      if (!column) {
-        throw new Error("Column not found");
-      }
+      Common.ensureColumnExists(list, sort);
       rows = rows.sort((a, b) => {
         return a.getValueCol(sort) < b.getValueCol(sort) ? 1 : -1;
       });
@@ -285,7 +268,8 @@ class ListService {
     pageSize: number
   ) {
     this.loadLists(this.listPath);
-    const list = this.getListById(listId);
+
+    const list = Common.getListById(this.lists, listId);
 
     let rows = [...list.rows];
     rows = rows.filter((row) => {
@@ -301,23 +285,16 @@ class ListService {
     return rows.slice(start, end);
   }
 
-  ensureListDoesNotExist(name: string) {
-    if (this.lists.find((list) => list.name === name)) {
-      throw new Error("List already exists");
-    }
-  }
+  moveLeft(listId: string, columnId: string) {
+    this.loadLists(this.listPath);
 
-  ensureListExists(listId: string) {
-    if (!this.lists.find((list) => list.id === listId)) {
-      throw new Error("List not found");
-    }
-  }
+    const list = Common.getListById(this.lists, listId);
+    const index = Common.getColumnIndex(list, columnId);
 
-  ensureColumnDoesNotExist(listId: string, name: string) {
-    const list = this.getListById(listId);
-    if (list.columns.find((col) => col.name === name)) {
-      throw new Error("Column already exists");
-    }
+    const temp = list.columns[index - 1];
+    list.columns[index - 1] = list.columns[index];
+    list.columns[index] = temp;
+    this.saveLists(this.listPath);
   }
 }
 

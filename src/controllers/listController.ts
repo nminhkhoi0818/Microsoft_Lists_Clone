@@ -56,31 +56,6 @@ export class ListController {
     }
   }
 
-  getRows(req: Request, res: Response) {
-    try {
-      const { listId } = req.params;
-      const search = req.query.search as string;
-      const sort = req.query.sort as string;
-      const page = parseInt(req.query.page as string);
-      const pageSize = parseInt(req.query.pageSize as string);
-
-      res.json(this.listService.getRows(listId, search, sort, page, pageSize));
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
-  }
-
-  updateList(req: Request, res: Response) {
-    try {
-      const listId = req.params.listId;
-      const { name } = req.body;
-      this.listService.updateList(listId, name);
-      res.status(200).send();
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
-  }
-
   deleteList(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
@@ -124,12 +99,15 @@ export class ListController {
     }
   }
 
-  addRow(req: Request, res: Response) {
+  getRows(req: Request, res: Response) {
     try {
-      const listId = req.params.listId;
-      const { data } = req.body;
-      this.listService.addRow(listId, data);
-      res.status(201).send();
+      const { listId } = req.params;
+      const search = req.query.search as string;
+      const sort = req.query.sort as string;
+      const page = parseInt(req.query.page as string);
+      const pageSize = parseInt(req.query.pageSize as string);
+
+      res.json(this.listService.getRows(listId, search, sort, page, pageSize));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -146,6 +124,17 @@ export class ListController {
       res.json(
         this.listService.filterRows(listId, column, value, page, pageSize)
       );
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  addRow(req: Request, res: Response) {
+    try {
+      const listId = req.params.listId;
+      const { data } = req.body;
+      this.listService.addRow(listId, data);
+      res.status(201).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

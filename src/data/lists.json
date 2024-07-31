@@ -210,13 +210,6 @@
       "name": "Test Template",
       "columns": [
         {
-          "id": "77b97566-923d-4c36-9351-1a4771b42017",
-          "name": "Full Name",
-          "type": "Text",
-          "isHidden": false,
-          "value": ""
-        },
-        {
           "id": "e6a49f2e-4813-479b-b65e-245c34368a24",
           "name": "Age",
           "type": "Number",

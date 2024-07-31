@@ -26,10 +26,6 @@ router.post("/from-template", (req, res) => {
   listController.createFromTemplate(req, res);
 });
 
-router.put("/:listId", (req, res) => {
-  listController.updateList(req, res);
-});
-
 router.delete("/:listId", (req, res) => {
   listController.deleteList(req, res);
 });
