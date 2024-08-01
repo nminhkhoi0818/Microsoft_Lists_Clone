@@ -2,72 +2,85 @@ import { v4 as uuidv4 } from "uuid";
 import {
   ChoiceColumn,
   Column,
+  CurrencyColumn,
   DateColumn,
+  HyperLinkColumn,
+  ImageColumn,
+  LocationColumn,
+  LookupColumn,
+  ManagedMetadataColumn,
+  MultiChoiceColumn,
   NumberColumn,
+  PersonColumn,
   TextColumn,
   YesNoColumn,
 } from "./Column";
-import { EnumChoiceType, EnumColumnType } from "./Enum";
+import { EnumColumnType } from "./Enum";
 
 class ColumnFactory {
   static mapColumn: {
     [key: string]: (
       id: string,
       name: string,
-      selectionType?: EnumChoiceType,
-      options?: string[]
+      defaultValue?: string,
+      choices?: string[]
     ) => Column;
   } = {
     [EnumColumnType.Text]: (id, name) => new TextColumn(id, name),
-    [EnumColumnType.Number]: (id, name) => new NumberColumn(id, name),
-    [EnumColumnType.YesNo]: (id, name) => new YesNoColumn(id, name),
+    [EnumColumnType.Number]: (id, name, defaultValue) =>
+      new NumberColumn(id, name, Number(defaultValue)),
+    [EnumColumnType.YesNo]: (id, name, defaultValue) =>
+      new YesNoColumn(id, name, defaultValue),
     [EnumColumnType.Date]: (id, name) => new DateColumn(id, name),
-    [EnumColumnType.Choice]: (id, name, selectionType, options) =>
-      new ChoiceColumn(id, name, selectionType, options),
-    [EnumColumnType.Hyperlink]: (id, name) => new TextColumn(id, name),
-    [EnumColumnType.Currency]: (id, name) => new NumberColumn(id, name),
-    [EnumColumnType.Location]: (id, name) => new TextColumn(id, name),
-    [EnumColumnType.Image]: (id, name) => new TextColumn(id, name),
-    [EnumColumnType.ManagedMetadata]: (id, name) => new TextColumn(id, name),
-    [EnumColumnType.Lookup]: (id, name) => new TextColumn(id, name),
+    [EnumColumnType.Choice]: (id, name, defaultValue, choices) =>
+      new ChoiceColumn(id, name, choices, defaultValue),
+    [EnumColumnType.MultiChoice]: (id, name, defaultValue, choices) =>
+      new MultiChoiceColumn(id, name, choices, defaultValue),
+    [EnumColumnType.Hyperlink]: (id, name) => new HyperLinkColumn(id, name),
+    [EnumColumnType.Person]: (id, name) => new PersonColumn(id, name),
+    [EnumColumnType.Currency]: (id, name) => new CurrencyColumn(id, name),
+    [EnumColumnType.Location]: (id, name) => new LocationColumn(id, name),
+    [EnumColumnType.Image]: (id, name) => new ImageColumn(id, name),
+    [EnumColumnType.ManagedMetadata]: (id, name) =>
+      new ManagedMetadataColumn(id, name),
+    [EnumColumnType.Lookup]: (id, name) => new LookupColumn(id, name),
   };
 
   static loadColumn(data: any): Column {
-    const { id, type, name, options, selectionType } = data;
-    const column = this.mapColumn[type](id, name, selectionType, options);
+    const { id, type, name, defaultValue, choices } = data;
+    const column = this.mapColumn[type](id, name, defaultValue, choices);
     return column;
   }
 
   static createColumn(data: any): Column {
-    const { type, name, options, selectionType } = data;
-    const column = this.mapColumn[type](uuidv4(), name, selectionType, options);
+    const { type, name, defaultValue } = data;
+    let { choices } = data;
+
+    if (choices) {
+      choices = choices.split(",").map((choice: string) => choice.trim());
+    }
+
+    const column = this.mapColumn[type](uuidv4(), name, defaultValue, choices);
+
     return column;
   }
 }
 
 class Row {
   id: string;
-  columns: Column[];
+  data: { [key: string]: any };
 
-  constructor(columns: Column[], id?: string) {
+  constructor(id?: string, data?: { [key: string]: any }) {
     this.id = id ?? uuidv4();
-    this.columns = columns;
+    this.data = data ?? {};
   }
 
-  addColumn(column: Column) {
-    this.columns.push(ColumnFactory.loadColumn(column));
+  setValue(columnName: string, value: any) {
+    this.data[columnName] = value;
   }
 
-  setValueCol(name: string, value: any) {
-    this.columns.forEach((column) => {
-      if (column.name === name) {
-        column.setValue(value);
-      }
-    });
-  }
-
-  getValueCol(name: string) {
-    return this.columns.find((column) => column.name === name)?.getValue();
+  getValue(columnName: string) {
+    return this.data[columnName];
   }
 }
 

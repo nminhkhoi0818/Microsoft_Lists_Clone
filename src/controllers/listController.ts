@@ -132,20 +132,20 @@ export class ListController {
   addRow(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
-      const { data } = req.body;
-      this.listService.addRow(listId, data);
+      const { formValues } = req.body;
+      this.listService.addRow(listId, formValues);
       res.status(201).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  updateRow(req: Request, res: Response) {
+  updateCellData(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const rowId = req.params.rowId;
       const { data } = req.body;
-      this.listService.updateRow(listId, rowId, data);
+      this.listService.updateCellData(listId, rowId, data);
       res.status(200).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -163,12 +163,12 @@ export class ListController {
     }
   }
 
-  addOption(req: Request, res: Response) {
+  addChoice(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const columnId = req.params.columnId;
-      const { option } = req.body;
-      this.listService.addOption(listId, columnId, option);
+      const { choice } = req.body;
+      this.listService.addChoice(listId, columnId, choice);
       res.status(200).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });

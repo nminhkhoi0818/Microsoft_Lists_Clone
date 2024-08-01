@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { EnumChoiceType, EnumColumnType } from "./Enum";
+import { EnumColumnType } from "./Enum";
 
 abstract class Column {
   id: string;
@@ -14,218 +14,266 @@ abstract class Column {
     this.isHidden = false;
   }
 
-  abstract setValue(value: any): void;
-  abstract getValue(): any;
+  abstract validate(value: any): boolean;
+  abstract mapDataCol(data: string): Object;
 }
 
 class TextColumn extends Column {
-  value: string;
-
-  constructor(id: string, name: string = "", value: string = "") {
+  constructor(id: string, name: string = "") {
     super(id, name, EnumColumnType.Text);
-    this.value = value;
   }
 
-  setValue(value: string) {
-    this.value = value;
+  validate(value: any): boolean {
+    return typeof value === "string";
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string) {
+    return data;
   }
 }
-
 class NumberColumn extends Column {
-  value: number;
+  defaultValue: number;
 
-  constructor(id: string, name: string = "", value: number = 0) {
+  constructor(id: string, name: string = "", defaultValue: number = 0) {
     super(id, name, EnumColumnType.Number);
-    this.value = value;
+    this.defaultValue = defaultValue;
   }
 
-  setValue(value: number) {
-    this.value = value;
+  validate(value: any): boolean {
+    return !isNaN(parseFloat(value));
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string) {
+    return parseFloat(data);
   }
 }
 
 class YesNoColumn extends Column {
-  value: boolean;
+  defaultValue: string;
 
-  constructor(id: string, name: string = "", value: boolean = false) {
+  constructor(id: string, name: string = "", defaultValue: string = "Yes") {
     super(id, name, EnumColumnType.YesNo);
-    this.value = value;
+    this.defaultValue = defaultValue;
   }
 
-  setValue(value: any): void {
-    this.value = value;
+  validate(value: any): boolean {
+    return parseInt(value) === 1 || parseInt(value) === 0;
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string) {
+    const value = parseInt(data);
+    return {
+      value,
+      displayText: value === 1 ? "Yes" : "No",
+    };
   }
 }
 
 class DateColumn extends Column {
-  value: Date;
-
-  constructor(id: string, name: string = "", value: Date = new Date()) {
+  constructor(id: string, name: string = "") {
     super(id, name, EnumColumnType.Date);
-    this.value = value;
   }
 
-  setValue(value: Date) {
-    this.value = value;
+  validate(value: any): boolean {
+    const date = new Date(value);
+    return !isNaN(date.getTime());
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string): Object {
+    const date = new Date(data);
+    return {
+      isoDate: date.toISOString(),
+      localDate: date.toLocaleDateString(),
+    };
   }
 }
 
 class ChoiceColumn extends Column {
-  value!: string | string[];
-  selectionType: EnumChoiceType;
-  options: string[];
+  choices: string[];
+  defaultValue: string;
 
   constructor(
     id: string,
     name: string,
-    selectionType: EnumChoiceType = EnumChoiceType.Single,
-    options: string[] = []
+    choices: string[] = [],
+    defaultValue: string = ""
   ) {
     super(id, name, EnumColumnType.Choice);
-    this.selectionType = selectionType;
-    this.options = options;
+    this.choices = choices;
+    this.defaultValue = defaultValue;
   }
 
-  addOption(option: string) {
-    this.options.push(option);
+  addChoice(choice: string) {
+    this.choices.push(choice);
   }
 
-  setValue(value: string | string[]) {
-    if (Array.isArray(value)) {
-      let valueOption = this.options.filter((option) => {
-        return value.includes(option);
-      });
-      this.value = valueOption;
-    }
-    this.value = value;
+  validate(value: any): boolean {
+    return this.choices.includes(value);
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string) {
+    return data;
+  }
+}
+
+class MultiChoiceColumn extends Column {
+  choices: string[];
+  defaultValue: string;
+
+  constructor(
+    id: string,
+    name: string,
+    choices: string[] = [],
+    defaultValue: string = ""
+  ) {
+    super(id, name, EnumColumnType.MultiChoice);
+    this.choices = choices;
+    this.defaultValue = defaultValue;
+  }
+
+  addChoice(choice: string) {
+    this.choices.push(choice);
+  }
+
+  removeChoice(choice: string) {
+    this.choices = this.choices.filter((c) => c !== choice);
+  }
+
+  validate(value: any): boolean {
+    const values = value.split(", ");
+    return (
+      Array.isArray(values) &&
+      values.every((val: any) => this.choices.includes(val))
+    );
+  }
+
+  mapDataCol(data: string): Object {
+    return data.split(", ");
   }
 }
 
 class HyperLinkColumn extends Column {
-  value: string;
-
-  constructor(id: string, name: string = "", value: string = "") {
+  constructor(id: string, name: string = "") {
     super(id, name, EnumColumnType.Hyperlink);
-    this.value = value;
   }
 
-  setValue(value: string) {
-    this.value = value;
+  validate(value: any): boolean {
+    return typeof value === "string";
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string) {
+    const [url, displayText] = data.split(", ");
+
+    return {
+      url,
+      displayText,
+    };
   }
 }
 
 class CurrencyColumn extends Column {
-  value: number;
   decimalPlaces: number;
   currencyFormat: string;
   defaultValue: number;
 
-  constructor(id: string, name: string = "", value: number = 0) {
+  constructor(id: string, name: string = "") {
     super(id, name, EnumColumnType.Currency);
-    this.value = value;
     this.decimalPlaces = 2;
     this.currencyFormat = "USD";
     this.defaultValue = 0;
   }
 
-  setValue(value: number) {
-    this.value = value;
+  validate(value: any): boolean {
+    return typeof value === "number";
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string): Object {
+    return parseFloat(data);
   }
 }
 
 class LocationColumn extends Column {
-  value: string;
-
-  constructor(id: string, name: string = "", value: string = "") {
+  constructor(id: string, name: string = "") {
     super(id, name, EnumColumnType.Location);
-    this.value = value;
   }
 
-  setValue(value: string) {
-    this.value = value;
+  validate(value: any): boolean {
+    return typeof value === "string";
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string): Object {
+    const [displayName, address] = data.split(", ");
+    return {
+      displayName,
+      address,
+    };
   }
 }
 
 class ImageColumn extends Column {
-  value: string;
-
-  constructor(id: string, name: string = "", value: string = "") {
+  constructor(id: string, name: string = "") {
     super(id, name, EnumColumnType.Image);
-    this.value = value;
   }
 
-  setValue(value: string) {
-    this.value = value;
+  validate(value: any): boolean {
+    const [url, fileName] = value.split(", ");
+    return typeof url === "string" && typeof fileName === "string";
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string): Object {
+    const [url, fileName] = data.split(", ");
+    return {
+      url,
+      fileName,
+    };
+  }
+}
+
+class PersonColumn extends Column {
+  constructor(id: string, name: string = "") {
+    super(id, name, EnumColumnType.Person);
+  }
+
+  validate(value: any): boolean {
+    return typeof value === "string";
+  }
+
+  mapDataCol(data: string): Object {
+    const [title, picture, email] = data.split(", ");
+
+    return {
+      title,
+      picture,
+      email,
+    };
   }
 }
 
 class ManagedMetadataColumn extends Column {
-  value: string;
-
-  constructor(id: string, name: string = "", value: string = "") {
+  constructor(id: string, name: string = "") {
     super(id, name, EnumColumnType.ManagedMetadata);
-    this.value = value;
   }
 
-  setValue(value: string) {
-    this.value = value;
+  validate(value: any): boolean {
+    return typeof value === "string";
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string): Object {
+    return data;
   }
 }
 
 class LookupColumn extends Column {
-  value: string;
-
-  constructor(id: string, name: string = "", value: string = "") {
+  constructor(id: string, name: string = "") {
     super(id, name, EnumColumnType.Lookup);
-    this.value = value;
   }
 
-  setValue(value: string) {
-    this.value = value;
+  validate(value: any): boolean {
+    return typeof value === "string";
   }
 
-  getValue() {
-    return this.value;
+  mapDataCol(data: string): Object {
+    return data;
   }
 }
 
@@ -236,6 +284,8 @@ export {
   NumberColumn,
   YesNoColumn,
   ChoiceColumn,
+  MultiChoiceColumn,
+  PersonColumn,
   HyperLinkColumn,
   CurrencyColumn,
   LocationColumn,

@@ -1,6 +1,6 @@
 import fs from "fs";
 import List from "../models/List";
-import { ChoiceColumn, TextColumn } from "../models/Column";
+import { ChoiceColumn, MultiChoiceColumn, TextColumn } from "../models/Column";
 import { ColumnFactory, Row } from "../models/Row";
 import path from "path";
 import { DEFAULT_COLUMNS, FILE_PATHS } from "../config/default";
@@ -53,7 +53,9 @@ class ListService {
         list.columns = item.columns.map((columnData: any) => {
           return ColumnFactory.loadColumn(columnData);
         });
-        list.rows = this.parseRows(item.rows);
+        list.rows = item.rows.map((row: any) => {
+          return new Row(row.id, row.data);
+        });
         return list;
       });
     } catch (error) {
@@ -72,7 +74,9 @@ class ListService {
           item.columns.map((columnData: any) => {
             return ColumnFactory.loadColumn(columnData);
           }),
-          this.parseRows(item.rows),
+          item.rows.map((row: any) => {
+            return new Row(row.id, row.data);
+          }),
           item.id
         );
         this.templates.push(newTemplate);
@@ -80,18 +84,6 @@ class ListService {
     } catch (error) {
       throw new Error("Error loading templates");
     }
-  }
-
-  parseRows(rowsData: any[]) {
-    return rowsData.map((item: any) => {
-      const columns = item.columns.map((columnData: any) => {
-        let column = ColumnFactory.loadColumn(columnData);
-        column.setValue(columnData.value);
-        return column;
-      });
-      let row = new Row(columns, item.id);
-      return row;
-    });
   }
 
   saveLists(filePath: string) {
@@ -107,7 +99,7 @@ class ListService {
   }
 
   getAllTemplates() {
-    this.loadTemplates(this.listPath);
+    this.loadTemplates(this.templatePath);
     return this.templates;
   }
 
@@ -146,12 +138,6 @@ class ListService {
     const list = Common.getListById(this.lists, listId);
     const column = Common.getColumnById(list, columnId);
 
-    list.rows.forEach((row) => {
-      const col = Common.findColumnInRow(row, columnId);
-      col.name = name;
-      col.type = type;
-    });
-
     column.name = name;
     column.type = type;
     this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
@@ -161,42 +147,47 @@ class ListService {
     this.loadLists(this.listPath);
 
     const list = Common.getListById(this.lists, listId);
-    const column = Common.getColumnById(list, columnId);
 
     list.columns = list.columns.filter((col) => col.id !== columnId);
+    const column = Common.getColumnById(list, columnId);
+
     list.rows.forEach((row) => {
-      row.columns = row.columns.filter((col) => col.name !== column?.name);
+      delete row.data[column.name];
     });
 
     this.saveLists(this.listPath);
   }
 
-  addRow(listId: string, data: any) {
+  addRow(listId: string, formValues: any) {
     this.loadLists(this.listPath);
 
     const list = Common.getListById(this.lists, listId);
-    const row: Row = new Row(list.columns);
+    let row = new Row();
 
-    data.forEach((colData) => {
-      Object.keys(colData).forEach((colName) => {
-        row.setValueCol(colName, colData[colName]);
-      });
+    formValues.forEach((item: any) => {
+      const { FieldName, FieldValue } = item;
+
+      const column = Common.getColumnByName(list, FieldName);
+      Common.validateRowData(column, FieldValue);
+
+      row.setValue(column.name, column.mapDataCol(FieldValue));
     });
+
     list.rows.push(row);
     this.saveLists(this.listPath);
   }
 
-  updateRow(listId: string, rowId: string, data: any) {
+  updateCellData(listId: string, rowId: string, data: any) {
     this.loadLists(this.listPath);
 
     const list = Common.getListById(this.lists, listId);
     const row = Common.getRowById(list, rowId);
 
-    data.forEach((colData) => {
-      Object.keys(colData).forEach((colName) => {
-        row.setValueCol(colName, colData[colName]);
-      });
-    });
+    const { FieldName, FieldValue } = data;
+    const column = Common.getColumnByName(list, FieldName);
+    Common.validateRowData(column, FieldValue);
+
+    row.setValue(column.name, column.mapDataCol(FieldValue));
 
     this.saveLists(this.listPath);
   }
@@ -210,23 +201,15 @@ class ListService {
     this.saveLists(this.listPath);
   }
 
-  addOption(listId: string, columnId: string, option: string) {
+  addChoice(listId: string, columnId: string, option: string) {
     this.loadLists(this.listPath);
 
     const list = Common.getListById(this.lists, listId);
-    const column = list.columns.find(
-      (col) => col.id === columnId
-    ) as ChoiceColumn;
+    const column = Common.getColumnById(list, columnId) as
+      | ChoiceColumn
+      | MultiChoiceColumn;
 
-    if (!column) {
-      throw new Error("Column not found");
-    }
-
-    if (column.type !== EnumColumnType.Choice) {
-      throw new Error("Column is not a choice type");
-    }
-
-    column.addOption(option);
+    column.addChoice(option);
     this.saveLists(this.listPath);
   }
 
@@ -244,16 +227,19 @@ class ListService {
 
     if (search) {
       rows = list.rows.filter((row) => {
-        return row.columns.some((col) => {
-          return col.getValue().toString().includes(search);
+        return Object.values(row.data).some((value) => {
+          return value.toString().toLowerCase().includes(search.toLowerCase());
         });
       });
     }
 
     if (sort) {
       Common.ensureColumnExists(list, sort);
-      rows = rows.sort((a, b) => {
-        return a.getValueCol(sort) < b.getValueCol(sort) ? 1 : -1;
+      rows.sort((a, b) => {
+        const columnA = a.data[sort];
+        const columnB = b.data[sort];
+
+        return columnA > columnB ? 1 : -1;
       });
     }
 
@@ -273,7 +259,7 @@ class ListService {
 
     let rows = [...list.rows];
     rows = rows.filter((row) => {
-      return value.includes(row.getValueCol(column));
+      return value.includes(row.data[column]);
     });
 
     return this.paginateRows(rows, page, pageSize);

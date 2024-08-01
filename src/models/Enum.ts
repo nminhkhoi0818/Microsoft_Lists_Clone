@@ -1,26 +1,17 @@
 enum EnumColumnType {
   Text = "Text",
   Number = "Number",
-  YesNo = "Yes/No",
+  YesNo = "YesNo",
   Person = "Person",
   Date = "Date",
   Choice = "Choice",
+  MultiChoice = "MultiChoice",
   Hyperlink = "Hyperlink",
   Currency = "Currency",
   Location = "Location",
   Image = "Image",
   ManagedMetadata = "Managed Metadata",
   Lookup = "Lookup",
-}
-
-enum EnumChoiceField {
-  Option = "Option",
-}
-
-enum EnumCurrencyField {
-  decimalPlaces = "Decimal Places",
-  currencyFormat = "Currency Format",
-  defaultValue = "Default Value",
 }
 
 enum EnumViewType {
@@ -36,9 +27,4 @@ enum EnumCalendarDisplay {
   Month,
 }
 
-enum EnumChoiceType {
-  Single = "Single",
-  Multiple = "Multiple",
-}
-
-export { EnumColumnType, EnumViewType, EnumChoiceType, EnumCalendarDisplay };
+export { EnumColumnType, EnumViewType, EnumCalendarDisplay };

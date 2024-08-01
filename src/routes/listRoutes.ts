@@ -55,15 +55,15 @@ router.get("/:listId/rows/filter", (req, res) => {
 });
 
 router.put("/:listId/rows/:rowId", (req, res) => {
-  listController.updateRow(req, res);
+  listController.updateCellData(req, res);
 });
 
 router.delete("/:listId/rows/:rowId", (req, res) => {
   listController.deleteRow(req, res);
 });
 
-router.post("/:listId/columns/:columnId/options", (req, res) => {
-  listController.addOption(req, res);
+router.post("/:listId/columns/:columnId/choices", (req, res) => {
+  listController.addChoice(req, res);
 });
 
 /**
@@ -150,34 +150,6 @@ router.post("/:listId/columns/:columnId/options", (req, res) => {
  *     responses:
  *       201:
  *         description: List created
- */
-
-/**
- * @swagger
- * /api/lists/{listId}:
- *   put:
- *     summary: Update a list
- *     tags: [List]
- *     parameters:
- *       - in: path
- *         name: listId
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *     responses:
- *       200:
- *         description: List updated
- *       400:
- *         description: Bad request
  */
 
 /**
@@ -389,7 +361,7 @@ router.post("/:listId/columns/:columnId/options", (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               data:
+ *               formValues:
  *                 type: object
  *     responses:
  *       201:
@@ -400,7 +372,7 @@ router.post("/:listId/columns/:columnId/options", (req, res) => {
  * @swagger
  * /api/lists/{listId}/rows/{rowId}:
  *   put:
- *     summary: Update a row in a list
+ *     summary: Update a cell in a row
  *     tags: [Row]
  *     parameters:
  *       - in: path
@@ -453,7 +425,7 @@ router.post("/:listId/columns/:columnId/options", (req, res) => {
 
 /**
  * @swagger
- * /api/lists/{listId}/columns/{columnId}/options:
+ * /api/lists/{listId}/columns/{columnId}/choices:
  *   post:
  *     summary: Add an option to a column
  *     tags: [Column]
@@ -477,9 +449,9 @@ router.post("/:listId/columns/:columnId/options", (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               option:
+ *               choice:
  *                 type: string
- *                 description: The option to be added to the column
+ *                 description: The choice to be added to the column
  *     responses:
  *       200:
  *         description: Option added

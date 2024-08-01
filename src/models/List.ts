@@ -23,21 +23,6 @@ class List {
 
   addColumn(column: Column) {
     this.columns.push(column);
-
-    this.rows.forEach((row) => {
-      row.addColumn(column);
-    });
-  }
-
-  addRow(...data: any[]) {
-    const row: Row = new Row(this.columns);
-
-    data.forEach((colData) => {
-      Object.keys(colData).forEach((colName) => {
-        row.setValueCol(colName, colData[colName]);
-      });
-    });
-    this.rows.push(row);
   }
 
   getColumn(colName: string) {
@@ -55,22 +40,6 @@ class List {
     this.rows = this.rows.filter((row) => row.id !== rowId);
   }
 
-  deleteColumn(colName: string) {
-    this.columns = this.columns.filter((col) => col.name !== colName);
-
-    this.rows.forEach((row) => {
-      row.columns = row.columns.filter((col) => col.name !== colName);
-    });
-  }
-
-  search(search: string) {
-    return this.rows.filter((row) => {
-      return row.columns.some((col) => {
-        return col.getValue().toString().includes(search);
-      });
-    });
-  }
-
   getPage(pageNum: number, pageSize: number) {
     const start = (pageNum - 1) * pageSize;
     const end = start + pageSize;
@@ -84,45 +53,6 @@ class List {
   hideColumn(colName: string) {
     const col = this.getColumn(colName);
     col!.isHidden = true;
-  }
-
-  moveLeftColumn(colName: string) {
-    const idx = this.columns.findIndex((col) => col.name === colName);
-    [this.columns[idx - 1], this.columns[idx]] = [
-      this.columns[idx],
-      this.columns[idx - 1],
-    ];
-    this.rows.forEach((row) => {
-      [row.columns[idx - 1], row.columns[idx]] = [
-        row.columns[idx],
-        row.columns[idx - 1],
-      ];
-    });
-  }
-
-  sortAsc(colName: string) {
-    this.rows.sort((a, b) => {
-      return a.getValueCol(colName) > b.getValueCol(colName) ? 1 : -1;
-    });
-  }
-
-  sortDesc(colName: string) {
-    this.rows.sort((a, b) => {
-      return a.getValueCol(colName) < b.getValueCol(colName) ? 1 : -1;
-    });
-  }
-
-  groupBy(colName: string) {
-    const groups: any = {};
-    this.rows.forEach((row) => {
-      const key = row.getValueCol(colName);
-      if (!groups[key]) {
-        groups[key] = [];
-      }
-      groups[key].push(row);
-    });
-
-    return groups;
   }
 
   addView(view: View) {

@@ -1,5 +1,5 @@
+import { Column } from "../models/Column";
 import List from "../models/List";
-import { Row } from "../models/Row";
 
 class Common {
   static ensureListDoesNotExist(lists: List[], name: string): void {
@@ -20,8 +20,8 @@ class Common {
     }
   }
 
-  static ensureColumnExists(list: List, columnId: string) {
-    if (!list.columns.find((col) => col.id === columnId)) {
+  static ensureColumnExists(list: List, name: string) {
+    if (!list.columns.find((col) => col.name === name)) {
       throw new Error("Column not found");
     }
   }
@@ -40,8 +40,8 @@ class Common {
     return column;
   }
 
-  static findColumnInRow(row: Row, columnId: string) {
-    const column = row.columns.find((col) => col.id === columnId);
+  static getColumnByName(list: List, columnName: string) {
+    const column = list.columns.find((col) => col.name === columnName);
     if (!column) throw new Error("Column not found");
 
     return column;
@@ -59,6 +59,12 @@ class Common {
     if (colIdx === -1) throw new Error("Column not found");
 
     return colIdx;
+  }
+
+  static validateRowData(column: Column, data: any) {
+    if (!column.validate(data)) {
+      throw new Error("Invalid value");
+    }
   }
 }
 
