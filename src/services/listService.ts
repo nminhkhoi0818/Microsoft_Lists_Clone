@@ -158,61 +158,6 @@ class ListService {
     this.saveLists(this.listPath);
   }
 
-  addRow(listId: string, formValues: any) {
-    this.loadLists(this.listPath);
-
-    const list = Common.getListById(this.lists, listId);
-    let row = new Row();
-
-    formValues.forEach((item: any) => {
-      const { FieldName, FieldValue } = item;
-
-      const column = Common.getColumnByName(list, FieldName);
-      Common.validateRowData(column, FieldValue);
-
-      row.setValue(column.name, column.mapDataCol(FieldValue));
-    });
-
-    list.rows.push(row);
-    this.saveLists(this.listPath);
-  }
-
-  updateCellData(listId: string, rowId: string, data: any) {
-    this.loadLists(this.listPath);
-
-    const list = Common.getListById(this.lists, listId);
-    const row = Common.getRowById(list, rowId);
-
-    const { FieldName, FieldValue } = data;
-    const column = Common.getColumnByName(list, FieldName);
-    Common.validateRowData(column, FieldValue);
-
-    row.setValue(column.name, column.mapDataCol(FieldValue));
-
-    this.saveLists(this.listPath);
-  }
-
-  deleteRow(listId: string, rowId: string) {
-    this.loadLists(this.listPath);
-
-    const list = Common.getListById(this.lists, listId);
-    list.rows = list.rows.filter((row) => row.id !== rowId);
-
-    this.saveLists(this.listPath);
-  }
-
-  addChoice(listId: string, columnId: string, option: string) {
-    this.loadLists(this.listPath);
-
-    const list = Common.getListById(this.lists, listId);
-    const column = Common.getColumnById(list, columnId) as
-      | ChoiceColumn
-      | MultiChoiceColumn;
-
-    column.addChoice(option);
-    this.saveLists(this.listPath);
-  }
-
   getRows(
     listId: string,
     search: string,
@@ -246,6 +191,49 @@ class ListService {
     return this.paginateRows(rows, page, pageSize);
   }
 
+  addRow(listId: string, formValues: any) {
+    this.loadLists(this.listPath);
+
+    const list = Common.getListById(this.lists, listId);
+    let row = new Row();
+
+    formValues.forEach((item: any) => {
+      const { FieldName, FieldValue } = item;
+
+      const column = Common.getColumnByName(list, FieldName);
+      Common.validateRowData(column, FieldValue);
+
+      row.setValue(column.name, column.mapDataCol(FieldValue));
+    });
+
+    list.rows.push(row);
+    this.saveLists(this.listPath);
+  }
+
+  deleteRow(listId: string, rowId: string) {
+    this.loadLists(this.listPath);
+
+    const list = Common.getListById(this.lists, listId);
+    list.rows = list.rows.filter((row) => row.id !== rowId);
+
+    this.saveLists(this.listPath);
+  }
+
+  updateCellData(listId: string, rowId: string, data: any) {
+    this.loadLists(this.listPath);
+
+    const list = Common.getListById(this.lists, listId);
+    const row = Common.getRowById(list, rowId);
+
+    const { FieldName, FieldValue } = data;
+    const column = Common.getColumnByName(list, FieldName);
+    Common.validateRowData(column, FieldValue);
+
+    row.setValue(column.name, column.mapDataCol(FieldValue));
+
+    this.saveLists(this.listPath);
+  }
+
   filterRows(
     listId: string,
     column: string,
@@ -271,15 +259,15 @@ class ListService {
     return rows.slice(start, end);
   }
 
-  moveLeft(listId: string, columnId: string) {
+  addChoice(listId: string, columnId: string, option: string) {
     this.loadLists(this.listPath);
 
     const list = Common.getListById(this.lists, listId);
-    const index = Common.getColumnIndex(list, columnId);
+    const column = Common.getColumnById(list, columnId) as
+      | ChoiceColumn
+      | MultiChoiceColumn;
 
-    const temp = list.columns[index - 1];
-    list.columns[index - 1] = list.columns[index];
-    list.columns[index] = temp;
+    column.addChoice(option);
     this.saveLists(this.listPath);
   }
 }

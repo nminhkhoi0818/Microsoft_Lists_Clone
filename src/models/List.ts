@@ -55,6 +55,16 @@ class List {
     col!.isHidden = true;
   }
 
+  createForm(name: string) {
+    const form = new Form(name, this.columns, this.rows);
+    this.forms.push(form);
+    return form;
+  }
+
+  getForm(formName: string) {
+    return this.forms.find((form) => form.title === formName);
+  }
+
   addView(view: View) {
     view.columns = this.columns;
     view.rows = this.rows;
@@ -64,16 +74,6 @@ class List {
 
   getViews(viewName: string) {
     return this.views.filter((view) => view.name === viewName);
-  }
-
-  createForm(name: string) {
-    const form = new Form(name, this.columns, this.rows);
-    this.forms.push(form);
-    return form;
-  }
-
-  getForm(formName: string) {
-    return this.forms.find((form) => form.title === formName);
   }
 }
 

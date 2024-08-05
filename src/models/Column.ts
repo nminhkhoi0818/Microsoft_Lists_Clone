@@ -88,6 +88,36 @@ class DateColumn extends Column {
   }
 }
 
+class HyperLinkColumn extends Column {
+  url: string;
+  displayText: string;
+
+  constructor(id: string, name: string = "") {
+    super(id, name, EnumColumnType.Hyperlink);
+    this.url = "";
+    this.displayText = "";
+  }
+
+  validate(value: any): boolean {
+    const [url, displayText] = value.split(", ");
+    if (url && displayText) {
+      this.url = url;
+      this.displayText = displayText;
+      return true;
+    }
+    return false;
+  }
+
+  mapDataCol(data: string) {
+    const [url, displayText] = data.split(", ");
+
+    return {
+      url,
+      displayText,
+    };
+  }
+}
+
 class ChoiceColumn extends Column {
   choices: string[];
   defaultValue: string;
@@ -149,25 +179,6 @@ class MultiChoiceColumn extends Column {
 
   mapDataCol(data: string): Object {
     return data.split(", ");
-  }
-}
-
-class HyperLinkColumn extends Column {
-  constructor(id: string, name: string = "") {
-    super(id, name, EnumColumnType.Hyperlink);
-  }
-
-  validate(value: any): boolean {
-    return typeof value === "string";
-  }
-
-  mapDataCol(data: string) {
-    const [url, displayText] = data.split(", ");
-
-    return {
-      url,
-      displayText,
-    };
   }
 }
 

@@ -18,7 +18,7 @@ import {
 import { EnumColumnType } from "./Enum";
 
 class ColumnFactory {
-  static mapColumn: {
+  private static mapColumn: {
     [key: string]: (
       id: string,
       name: string,
@@ -54,11 +54,13 @@ class ColumnFactory {
 
   static createColumn(data: any): Column {
     const { type, name, defaultValue } = data;
-    let { choices } = data;
 
-    if (choices) {
-      choices = choices.split(",").map((choice: string) => choice.trim());
-    }
+    const mapValues = {
+      choices: (value: string) =>
+        value.split(",").map((choice: string) => choice.trim()),
+    };
+
+    const choices = mapValues.choices(data.choices);
 
     const column = this.mapColumn[type](uuidv4(), name, defaultValue, choices);
 
