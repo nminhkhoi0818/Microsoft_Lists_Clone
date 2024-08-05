@@ -1,185 +1,161 @@
 {
   "lists": [
     {
-      "id": "84822285-e81c-474e-bc2d-19339bb178bc",
+      "id": "aa6fdfab-c449-4e23-8528-01f44ddcdd7d",
       "name": "My List",
       "columns": [
         {
-          "id": "9f598c49-885f-4577-901e-e408b3771bbd",
-          "name": "Title",
+          "id": "faf89b53-b757-4019-b8c3-bfd281c3feba",
+          "name": "Full Name",
           "type": "Text",
-          "isHidden": false,
-          "value": ""
+          "isHidden": false
         },
         {
-          "id": "93998b55-5869-4a3a-922f-dc2c7fefb3bd",
+          "id": "ad0794d1-2b46-494b-88a0-64f3340ce723",
           "name": "Age",
           "type": "Number",
           "isHidden": false,
-          "value": 0
+          "defaultValue": 18
         },
         {
-          "id": "c9c707ce-28ba-4539-8556-8888c83219dc",
-          "name": "Gender",
-          "type": "Choice",
+          "id": "aee84969-3601-4144-a5d4-149b3bc1a824",
+          "name": "Youtube Link",
+          "type": "Hyperlink",
+          "isHidden": false
+        },
+        {
+          "id": "5d084f59-d553-40d4-8558-6890cacc79c4",
+          "name": "My Image",
+          "type": "Image",
+          "isHidden": false
+        },
+        {
+          "id": "0729c7b1-572c-4b72-96c9-ad9c9adb1ba7",
+          "name": "Person Column",
+          "type": "Person",
+          "isHidden": false
+        },
+        {
+          "id": "7046f337-0611-4bb3-84ef-10e94e407d6a",
+          "name": "Married",
+          "type": "YesNo",
           "isHidden": false,
-          "selectionType": 0,
-          "options": [
-            "Male",
-            "Female",
-            "Other"
-          ]
+          "defaultValue": "Yes"
+        },
+        {
+          "id": "a83f19f8-91d6-40b9-b897-45af0ac96451",
+          "name": "Hometown",
+          "type": "Location",
+          "isHidden": false
+        },
+        {
+          "id": "087a5abf-10f9-4fb0-97db-9b3dbee56f9f",
+          "name": "Courses",
+          "type": "MultiChoice",
+          "isHidden": false,
+          "choices": [
+            "Math",
+            "English",
+            "Geography"
+          ],
+          "defaultValue": ""
+        },
+        {
+          "id": "0d5eebb6-39ef-4e7a-af8d-2a033866d603",
+          "name": "Birthday",
+          "type": "Date",
+          "isHidden": false
+        },
+        {
+          "id": "3bf1bb92-5337-496a-b2e1-1c288251de75",
+          "name": "Teacher",
+          "type": "Person",
+          "isHidden": false
         }
       ],
       "rows": [
         {
-          "id": "e8d8e079-2d98-4cdc-a96f-ce2b5f5904ab",
-          "columns": [
-            {
-              "id": "cbf2abbd-111f-4b7b-984f-4732a7137c37",
-              "name": "Title",
-              "type": "Text",
-              "isHidden": false,
-              "value": "John Doe"
+          "id": "895c5a4d-9602-44ea-9f9f-5906f9d428e2",
+          "data": {
+            "Full Name": "Minh Khoi",
+            "Age": 21,
+            "Youtube Link": {
+              "link": "https://www.youtube.com",
+              "displayText": "Youtube"
             },
-            {
-              "id": "fd131153-6f23-4b06-bffd-81bbebea47ff",
-              "name": "Age",
-              "type": "Number",
-              "isHidden": false,
-              "value": 30
+            "Married": {
+              "value": 1,
+              "displayText": "Yes"
             },
-            {
-              "id": "c99ada89-700d-476d-ab5a-8df4352393e9",
-              "name": "Gender",
-              "type": "Choice",
-              "isHidden": false,
-              "selectionType": 0,
-              "options": [
-                "Male",
-                "Female",
-                "Other"
-              ],
-              "value": "Male"
-            }
-          ]
+            "My Image": {
+              "url": "cat.png",
+              "fileName": "Cat Picture"
+            },
+            "Birthday": {
+              "isoDate": "2005-11-01T17:00:00.000Z",
+              "localDate": "11/2/2005"
+            },
+            "Hometown": {
+              "displayName": "Ho Chi Minh City Museum",
+              "address": "65 Đuong Ly Tu Trong"
+            },
+            "Courses": [
+              "Math",
+              "English"
+            ]
+          }
         },
         {
-          "id": "9ac7be6a-8e28-4d8e-ade9-49de8be61dcb",
-          "columns": [
-            {
-              "id": "d257dc86-89de-4b88-bec8-5a298ffac094",
-              "name": "Title",
-              "type": "Text",
-              "isHidden": false,
-              "value": "Jane Doe"
+          "id": "75752829-890e-4385-bfc8-6c6b78851c05",
+          "data": {
+            "Full Name": "Nam Pham",
+            "Age": 31,
+            "Youtube Link": {
+              "url": "https://www.youtube.com/@nampham",
+              "displayText": "Nam Pham Youtube"
             },
-            {
-              "id": "a07f5c7c-67d9-4fc1-8983-8305c273d9be",
-              "name": "Age",
-              "type": "Number",
-              "isHidden": false,
-              "value": 25
+            "Married": {
+              "value": 0,
+              "displayText": "No"
             },
-            {
-              "id": "de1dbec0-7842-45e3-a590-4fdcff607b2a",
-              "name": "Gender",
-              "type": "Choice",
-              "isHidden": false,
-              "selectionType": 0,
-              "options": [
-                "Male",
-                "Female",
-                "Other"
-              ],
-              "value": "Female"
+            "My Image": {
+              "url": "nampham.png",
+              "fileName": "Nam Pham Picture"
+            },
+            "Birthday": {
+              "isoDate": "1999-09-01T17:00:00.000Z",
+              "localDate": "9/2/1999"
+            },
+            "Hometown": {
+              "displayName": "Long An",
+              "address": "100 Duong Nguyen Minh Duong"
+            },
+            "Courses": [
+              "Math"
+            ],
+            "Teacher": {
+              "title": "Nguyen Van B",
+              "picture": "avatar1.png",
+              "email": "vanb@edu.vn"
             }
-          ]
+          }
         }
       ],
       "views": [],
       "forms": []
     },
     {
-      "id": "86bf5c88-5f29-42d6-a94b-9755dbf4e3f6",
+      "id": "2322e599-c336-4395-bd3c-1a4dccb8d8ae",
       "name": "My List 2",
       "columns": [
         {
-          "id": "90deb977-ac32-4432-a762-94133eaba80d",
-          "name": "Title",
+          "id": "Title",
+          "name": "",
           "type": "Text",
-          "isHidden": false,
-          "value": ""
-        },
-        {
-          "id": "d2bb7abc-dc14-4f75-8ab6-c88dde7671bd",
-          "name": "Age",
-          "type": "Number",
-          "isHidden": false,
-          "value": 0
-        },
-        {
-          "id": "f07260fc-6a36-4356-8605-215c3bab8c8a",
-          "name": "Is Active",
-          "type": "Yes/No",
-          "isHidden": false,
-          "value": false
+          "isHidden": false
         }
       ],
-      "rows": [
-        {
-          "id": "ca75d30d-5784-4c55-991b-897ac8312ca7",
-          "columns": [
-            {
-              "id": "6ddc9ed1-46a4-47f6-b58f-d13dcab33fb1",
-              "name": "Title",
-              "type": "Text",
-              "isHidden": false,
-              "value": "Peter"
-            },
-            {
-              "id": "2afd6afd-ec97-43a9-a7b9-1fc96d9a358c",
-              "name": "Age",
-              "type": "Number",
-              "isHidden": false,
-              "value": 35
-            },
-            {
-              "id": "4e08814d-a98a-47bf-8f51-21f65857a6ff",
-              "name": "Is Active",
-              "type": "Yes/No",
-              "isHidden": false,
-              "value": true
-            }
-          ]
-        },
-        {
-          "id": "10b97dd8-043c-4467-9254-044011d27383",
-          "columns": [
-            {
-              "id": "58f07b6a-c45a-4808-a589-4809b2de5747",
-              "name": "Title",
-              "type": "Text",
-              "isHidden": false,
-              "value": "Mary"
-            },
-            {
-              "id": "fe8e7a06-37b0-4311-b119-e3dc14a52e78",
-              "name": "Age",
-              "type": "Number",
-              "isHidden": false,
-              "value": 40
-            },
-            {
-              "id": "35f64d73-7dd1-44fd-8b06-e7168fe77dbd",
-              "name": "Is Active",
-              "type": "Yes/No",
-              "isHidden": false,
-              "value": false
-            }
-          ]
-        }
-      ],
+      "rows": [],
       "views": [],
       "forms": []
     }

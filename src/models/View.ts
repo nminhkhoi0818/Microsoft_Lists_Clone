@@ -53,14 +53,14 @@ class CalendarView extends View implements IMoveable {
 
   getFromDate(date: Date) {
     return this.rows.filter((row) => {
-      const rowDate = new Date(row.getValueCol(this.calendarColumn));
+      const rowDate = new Date(row.getValue(this.calendarColumn));
       return rowDate.toDateString() === date.toDateString();
     });
   }
 
   moveItem(rowId: string, newDate: Date) {
     const row = this.rows.find((row) => row.id === rowId);
-    row!.setValueCol(this.calendarColumn, newDate);
+    row!.setValue(this.calendarColumn, newDate);
   }
 }
 
@@ -82,17 +82,17 @@ class BoardView extends View implements IMoveable {
     const choiceColumn = this.columns.find(
       (col) => col.name === this.choiceColumn
     ) as ChoiceColumn;
-    choiceColumn.options.push(newOption);
+    choiceColumn.choices.push(newOption);
   }
 
   moveItem(rowId: string, newOption: string) {
     const row = this.rows.find((row) => row.id === rowId);
-    row!.setValueCol(this.choiceColumn, newOption);
+    row!.setValue(this.choiceColumn, newOption);
   }
 
   getOptionItems(option: string) {
     return this.rows.filter(
-      (row) => row.getValueCol(this.choiceColumn) === option
+      (row) => row.getValue(this.choiceColumn) === option
     );
   }
 }

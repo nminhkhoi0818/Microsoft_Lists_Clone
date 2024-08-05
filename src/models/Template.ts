@@ -7,12 +7,10 @@ class Template {
   name: string;
   columns: Column[];
   rows: Row[];
-  summary: string;
 
-  constructor(name: string, summary: string, columns: Column[], rows: Row[]) {
-    this.id = uuidv4();
+  constructor(name: string, columns: Column[], rows: Row[], id?: string) {
+    this.id = id ?? uuidv4();
     this.name = name;
-    this.summary = summary;
     this.columns = columns;
     this.rows = rows;
   }

@@ -1,10 +1,11 @@
 enum EnumColumnType {
   Text = "Text",
   Number = "Number",
-  YesNo = "Yes/No",
+  YesNo = "YesNo",
   Person = "Person",
   Date = "Date",
   Choice = "Choice",
+  MultiChoice = "MultiChoice",
   Hyperlink = "Hyperlink",
   Currency = "Currency",
   Location = "Location",
@@ -26,9 +27,4 @@ enum EnumCalendarDisplay {
   Month,
 }
 
-enum EnumChoiceType {
-  Single,
-  Multiple,
-}
-
-export { EnumColumnType, EnumViewType, EnumChoiceType, EnumCalendarDisplay };
+export { EnumColumnType, EnumViewType, EnumCalendarDisplay };
