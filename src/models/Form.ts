@@ -14,18 +14,6 @@ class Form {
     this.columns = columns;
     this.rows = rows;
   }
-
-  addColumn(column: Column) {
-    if (this.columns.find((field) => field.name === column.name)) {
-      throw new Error("Column name already exists");
-    }
-    this.columns.push(column);
-  }
-
-  hideColumn(colName: string) {
-    let column = this.columns.find((field) => field.name === colName);
-    column!.isHidden = true;
-  }
 }
 
 export default Form;

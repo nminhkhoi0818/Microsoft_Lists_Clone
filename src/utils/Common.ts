@@ -1,9 +1,18 @@
+import { FieldPacket, RowDataPacket } from "mysql2";
+import { connect } from "../db";
 import { Column } from "../models/Column";
 import List from "../models/List";
+import { ColumnFactory } from "../models/Row";
 
 class Common {
-  static ensureListDoesNotExist(lists: List[], name: string): void {
-    if (lists.find((list) => list.name === name)) {
+  static async ensureListDoesNotExist(name: string) {
+    const connection = await connect();
+    const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
+      "SELECT * FROM lists WHERE name = ?",
+      [name]
+    );
+
+    if (rows.length > 0) {
       throw new Error("List already exists");
     }
   }
@@ -14,8 +23,14 @@ class Common {
     }
   }
 
-  static ensureColumnDoesNotExist(list: List, name: string) {
-    if (list.columns.find((col) => col.name === name)) {
+  static async ensureColumnDoesNotExist(listId: string, name: string) {
+    const connection = await connect();
+    const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
+      "SELECT * FROM columns WHERE listId = ? AND name = ?",
+      [listId, name]
+    );
+
+    if (rows.length > 0) {
       throw new Error("Column already exists");
     }
   }
@@ -40,11 +55,14 @@ class Common {
     return column;
   }
 
-  static getColumnByName(list: List, columnName: string) {
-    const column = list.columns.find((col) => col.name === columnName);
-    if (!column) throw new Error("Column not found");
+  static async getColumnByName(listId: string, columnName: string) {
+    const connection = await connect();
+    const [rows] = await connection.execute(
+      "SELECT * FROM columns WHERE listId = ? AND name = ?",
+      [listId, columnName]
+    );
 
-    return column;
+    return ColumnFactory.loadColumn(rows[0]);
   }
 
   static getRowById(list: List, rowId: string) {
@@ -65,6 +83,22 @@ class Common {
     if (!column.validate(data)) {
       throw new Error("Invalid value");
     }
+  }
+
+  static configHandlers: { [key: string]: (value: string) => any } = {
+    choices: (value: string) =>
+      value.split(",").map((choice: string) => choice.trim().replace(/"/g, "")),
+    maxLength: (value: string) => Number(value),
+    defaultValue: (value: string) => value,
+  };
+
+  static checkValidConfig(config: any) {
+    config.forEach((item: any) => {
+      const { config_name } = item;
+      if (!Common.configHandlers[config_name]) {
+        throw new Error("Invalid config");
+      }
+    });
   }
 }
 

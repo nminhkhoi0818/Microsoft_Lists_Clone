@@ -55,14 +55,7 @@ class ColumnFactory {
   static createColumn(data: any): Column {
     const { type, name, defaultValue } = data;
 
-    const mapValues = {
-      choices: (value: string) =>
-        value.split(",").map((choice: string) => choice.trim()),
-    };
-
-    const choices = mapValues.choices(data.choices);
-
-    const column = this.mapColumn[type](uuidv4(), name, defaultValue, choices);
+    const column = this.mapColumn[type](uuidv4(), name, defaultValue);
 
     return column;
   }

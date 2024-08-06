@@ -1,274 +1,321 @@
-import fs from "fs";
 import List from "../models/List";
-import { ChoiceColumn, MultiChoiceColumn, TextColumn } from "../models/Column";
 import { ColumnFactory, Row } from "../models/Row";
-import path from "path";
-import { DEFAULT_COLUMNS, FILE_PATHS } from "../config/default";
+import { FieldPacket, RowDataPacket } from "mysql2/promise";
 import { EnumColumnType } from "../models/Enum";
-import Template from "../models/Template";
 import Common from "../utils/Common";
+import { connect } from "../db";
 
 class ListService {
-  lists: List[] = [];
-  templates: Template[] = [];
-  listPath: string = path.resolve(__dirname, FILE_PATHS.LISTS);
-  templatePath: string = path.resolve(__dirname, FILE_PATHS.TEMPLATES);
-
-  createList(name: string) {
-    this.loadLists(this.listPath);
-    Common.ensureListDoesNotExist(this.lists, name);
-
-    let newList = new List(name);
-    newList.addColumn(new TextColumn(DEFAULT_COLUMNS.NAME));
-    this.lists.push(newList);
-
-    this.saveLists(this.listPath);
-    return newList;
+  async getAllLists() {
+    const connection = await connect();
+    const [rows] = await connection.execute("SELECT * FROM lists");
+    await connection.end();
+    return rows;
   }
 
-  createFromTemplate(name: string, templateId: string) {
-    this.loadTemplates(this.templatePath);
-    const template = this.templates.find(
-      (template) => template.id === templateId
+  async createList(name: string) {
+    const connection = await connect();
+
+    Common.ensureListDoesNotExist(name);
+
+    await connection.execute(
+      "INSERT INTO lists (id, name) VALUES (UUID(), ?)",
+      [name]
+    );
+    await connection.end();
+  }
+
+  async getListById(listId: string) {
+    const connection = await connect();
+    const [rows] = await connection.execute(
+      "SELECT * FROM lists WHERE id = ?",
+      [listId]
     );
 
-    this.loadLists(this.listPath);
-    Common.ensureListDoesNotExist(this.lists, name);
-
-    let list = new List(name);
-    list.columns = template!.columns;
-    this.lists.push(list);
-
-    this.saveLists(this.listPath);
-    return list;
+    return new List(rows[0].name, rows[0].id);
   }
 
-  loadLists(filePath: string) {
-    try {
-      const jsonData = fs.readFileSync(filePath, "utf-8");
-      const data = JSON.parse(jsonData);
+  async deleteList(listId: string) {
+    const connection = await connect();
 
-      this.lists = data.lists.map((item: any) => {
-        const list = new List(item.name, item.id);
-        list.columns = item.columns.map((columnData: any) => {
-          return ColumnFactory.loadColumn(columnData);
-        });
-        list.rows = item.rows.map((row: any) => {
-          return new Row(row.id, row.data);
-        });
-        return list;
-      });
-    } catch (error) {
-      throw new Error("Error loading lists");
-    }
+    await connection.execute("DELETE FROM lists WHERE id = ?", [listId]);
+    await connection.execute("DELETE FROM columns WHERE listId = ?", [listId]);
+    await connection.execute("DELETE FROM _rows WHERE listId = ?", [listId]);
   }
 
-  loadTemplates(filePath: string) {
-    try {
-      const jsonData = fs.readFileSync(filePath, "utf-8");
-      const data = JSON.parse(jsonData);
+  async getColumns(listId: string) {
+    const connection = await connect();
 
-      data.templates.forEach((item: any) => {
-        const newTemplate = new Template(
-          item.name,
-          item.columns.map((columnData: any) => {
-            return ColumnFactory.loadColumn(columnData);
-          }),
-          item.rows.map((row: any) => {
-            return new Row(row.id, row.data);
-          }),
-          item.id
-        );
-        this.templates.push(newTemplate);
-      });
-    } catch (error) {
-      throw new Error("Error loading templates");
-    }
+    const [rows]: [any[], any] = await connection.execute(
+      `SELECT c.id AS columnId, c.name, c.type, cs.config_name, cs.config_value
+       FROM columns c
+       LEFT JOIN columns_settings cs ON c.id = cs.columnId
+       WHERE c.listId = ?`,
+      [listId]
+    );
+
+    const columns = rows.map((row: any) => {
+      const baseColumn = {
+        columnId: row.columnId,
+        name: row.name,
+        type: row.type,
+      };
+
+      const handleConfig = Common.configHandlers[row.config_name];
+      return handleConfig
+        ? { ...baseColumn, [row.config_name]: handleConfig(row.config_value) }
+        : baseColumn;
+    });
+
+    return columns;
   }
 
-  saveLists(filePath: string) {
-    const data = {
-      lists: this.lists,
-    };
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-  }
+  async addColumn(listId: string, data: any) {
+    const connection = await connect();
 
-  getAllLists() {
-    this.loadLists(this.listPath);
-    return this.lists;
-  }
-
-  getAllTemplates() {
-    this.loadTemplates(this.templatePath);
-    return this.templates;
-  }
-
-  getListById(listId: string) {
-    this.loadLists(this.listPath);
-    return Common.getListById(this.lists, listId);
-  }
-
-  deleteList(listId: string) {
-    this.loadLists(this.listPath);
-    Common.ensureListExists(this.lists, listId);
-
-    this.lists = this.lists.filter((list) => list.id !== listId);
-    this.saveLists(this.listPath);
-  }
-
-  addColumn(listId: string, data: any) {
-    this.loadLists(this.listPath);
-    const list = Common.getListById(this.lists, listId);
-
-    const { name } = data;
-    Common.ensureColumnDoesNotExist(list, name);
+    const { config } = data;
 
     const column = ColumnFactory.createColumn(data);
-    list.addColumn(column);
-    this.saveLists(this.listPath);
+
+    await connection.execute(
+      "INSERT INTO columns (id, name, type, listId) VALUES (?, ?, ?, ?)",
+      [column.id, column.name, column.type, listId]
+    );
+
+    for (const item of config) {
+      const { config_name, config_value } = item;
+
+      Common.checkValidConfig([item]);
+
+      await connection.execute(
+        "INSERT INTO columns_settings(id, columnId, config_name, config_value) VALUES(UUID(), ?, ?, ?)",
+        [column.id, config_name, config_value]
+      );
+    }
   }
 
-  updateColumn(
+  async updateColumn(
     listId: string,
     columnId: string,
     name: string,
     type: EnumColumnType
   ) {
-    this.loadLists(path.resolve(__dirname, FILE_PATHS.LISTS));
-    const list = Common.getListById(this.lists, listId);
-    const column = Common.getColumnById(list, columnId);
+    const connection = await connect();
 
+    const list = await this.getListById(listId);
+
+    const column = Common.getColumnById(list, columnId);
     column.name = name;
     column.type = type;
-    this.saveLists(path.resolve(__dirname, FILE_PATHS.LISTS));
+
+    await connection.execute(
+      "UPDATE columns SET name = ?, type = ? WHERE id = ?",
+      [name, type, columnId]
+    );
   }
 
-  deleteColumn(listId: string, columnId: string) {
-    this.loadLists(this.listPath);
+  async deleteColumn(listId: string, columnId: string) {
+    const connection = await connect();
 
-    const list = Common.getListById(this.lists, listId);
-
-    list.columns = list.columns.filter((col) => col.id !== columnId);
-    const column = Common.getColumnById(list, columnId);
-
-    list.rows.forEach((row) => {
-      delete row.data[column.name];
-    });
-
-    this.saveLists(this.listPath);
+    await connection.execute(
+      "DELETE FROM columns WHERE id = ? AND listId = ?",
+      [columnId, listId]
+    );
+    await connection.execute("DELETE FROM cells WHERE columnId = ?", [
+      columnId,
+    ]);
   }
 
-  getRows(
-    listId: string,
-    search: string,
-    sort: string,
-    page: number,
-    pageSize: number
-  ) {
-    this.loadLists(this.listPath);
+  async getRows(listId: string, page: number, pageSize: number) {
+    const connection = await connect();
 
-    const list = Common.getListById(this.lists, listId);
-    let rows = [...list.rows];
+    let query = "SELECT * FROM _rows WHERE listId = ?";
+    let params: string[] = [listId];
 
-    if (search) {
-      rows = list.rows.filter((row) => {
-        return Object.values(row.data).some((value) => {
-          return value.toString().toLowerCase().includes(search.toLowerCase());
-        });
-      });
+    if (page && pageSize) {
+      const offset = (page - 1) * pageSize;
+      query += " LIMIT ? OFFSET ?";
+      params.push(pageSize.toString(), offset.toString());
     }
 
-    if (sort) {
-      Common.ensureColumnExists(list, sort);
-      rows.sort((a, b) => {
-        const columnA = a.data[sort];
-        const columnB = b.data[sort];
+    const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
+      query,
+      params
+    );
 
-        return columnA > columnB ? 1 : -1;
+    const rowDataPromises = rows.map(async (row: any) => {
+      const [cells]: [RowDataPacket[], FieldPacket[]] =
+        await connection.execute(
+          "SELECT c.id AS cellId, c.columnId, c.data, col.name AS columnName FROM cells c JOIN columns col ON c.columnId = col.id WHERE c.rowId = ?",
+          [row.id]
+        );
+
+      const cellDataPromises = cells.map(async (cell: any) => {
+        const column = await Common.getColumnByName(listId, cell.columnName);
+        return {
+          columnName: cell.columnName,
+          data: column.mapDataCol(cell.data),
+        };
       });
-    }
 
-    return this.paginateRows(rows, page, pageSize);
-  }
+      const cellData = await Promise.all(cellDataPromises);
+      row.cells = cellData.reduce((acc: any, cell: any) => {
+        acc[cell.columnName] = cell.data;
+        return acc;
+      }, {});
 
-  addRow(listId: string, formValues: any) {
-    this.loadLists(this.listPath);
-
-    const list = Common.getListById(this.lists, listId);
-    let row = new Row();
-
-    formValues.forEach((item: any) => {
-      const { FieldName, FieldValue } = item;
-
-      const column = Common.getColumnByName(list, FieldName);
-      Common.validateRowData(column, FieldValue);
-
-      row.setValue(column.name, column.mapDataCol(FieldValue));
+      return row;
     });
 
-    list.rows.push(row);
-    this.saveLists(this.listPath);
+    const rowsWithCells = await Promise.all(rowDataPromises);
+
+    return rowsWithCells;
   }
 
-  deleteRow(listId: string, rowId: string) {
-    this.loadLists(this.listPath);
-
-    const list = Common.getListById(this.lists, listId);
-    list.rows = list.rows.filter((row) => row.id !== rowId);
-
-    this.saveLists(this.listPath);
-  }
-
-  updateCellData(listId: string, rowId: string, data: any) {
-    this.loadLists(this.listPath);
-
-    const list = Common.getListById(this.lists, listId);
-    const row = Common.getRowById(list, rowId);
-
-    const { FieldName, FieldValue } = data;
-    const column = Common.getColumnByName(list, FieldName);
-    Common.validateRowData(column, FieldValue);
-
-    row.setValue(column.name, column.mapDataCol(FieldValue));
-
-    this.saveLists(this.listPath);
-  }
-
-  filterRows(
+  async filterRows(
     listId: string,
     column: string,
-    value: string[],
+    values: string[],
     page: number,
     pageSize: number
   ) {
-    this.loadLists(this.listPath);
+    const connection = await connect();
 
-    const list = Common.getListById(this.lists, listId);
+    let query = `
+      SELECT DISTINCT r.id AS rowId
+      FROM _rows r
+      JOIN cells c ON r.id = c.rowId
+      JOIN columns col ON c.columnId = col.id
+      WHERE r.listId = ?
+    `;
+    let params: (string | number)[] = [listId];
 
-    let rows = [...list.rows];
-    rows = rows.filter((row) => {
-      return value.includes(row.data[column]);
+    if (column && values.length > 0) {
+      query += ` AND col.name = ? AND c.data IN (${values
+        .map(() => "?")
+        .join(", ")})`;
+      params.push(column, ...values);
+    }
+
+    const offset = (page - 1) * pageSize;
+    query += " LIMIT ? OFFSET ?";
+    params.push(pageSize.toString(), offset.toString());
+
+    const [rows]: [RowDataPacket[], FieldPacket[]] = await connection.execute(
+      query,
+      params
+    );
+
+    const rowDataPromises = rows.map(async (row: any) => {
+      const [cells]: [RowDataPacket[], FieldPacket[]] =
+        await connection.execute(
+          "SELECT c.id AS cellId, c.columnId, c.data, col.name AS columnName FROM cells c JOIN columns col ON c.columnId = col.id WHERE c.rowId = ?",
+          [row.rowId]
+        );
+
+      const cellDataPromises = cells.map(async (cell: any) => {
+        const column = await Common.getColumnByName(listId, cell.columnName);
+        return {
+          columnName: cell.columnName,
+          data: column.mapDataCol(cell.data),
+        };
+      });
+
+      const cellData = await Promise.all(cellDataPromises);
+      row.cells = cellData.reduce((acc: any, cell: any) => {
+        acc[cell.columnName] = cell.data;
+        return acc;
+      }, {});
+
+      return row;
     });
 
-    return this.paginateRows(rows, page, pageSize);
+    const rowsWithCells = await Promise.all(rowDataPromises);
+
+    return rowsWithCells;
   }
 
-  paginateRows(rows: Row[], page: number, pageSize: number) {
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    return rows.slice(start, end);
+  async updateCellData(listId: string, rowId: string, data: any) {
+    const connection = await connect();
+
+    const { FieldName, FieldValue } = data;
+
+    const column = await Common.getColumnByName(listId, FieldName);
+
+    await connection.execute(
+      "UPDATE cells SET data = ? WHERE rowId = ? AND columnId = ?",
+      [FieldValue, rowId, column.id]
+    );
   }
 
-  addChoice(listId: string, columnId: string, option: string) {
-    this.loadLists(this.listPath);
+  async addRow(listId: string, formValues: any) {
+    const connection = await connect();
+    let row = new Row();
 
-    const list = Common.getListById(this.lists, listId);
-    const column = Common.getColumnById(list, columnId) as
-      | ChoiceColumn
-      | MultiChoiceColumn;
+    await connection.execute("INSERT INTO _rows (id, listId) VALUES (?, ?)", [
+      row.id,
+      listId,
+    ]);
 
-    column.addChoice(option);
-    this.saveLists(this.listPath);
+    formValues.forEach(async (item: any) => {
+      const { FieldName, FieldValue } = item;
+
+      const column = await Common.getColumnByName(listId, FieldName);
+
+      await connection.execute(
+        "INSERT INTO cells (id, rowId, columnId, data) VALUES (UUID(), ?, ?, ?)",
+        [row.id, column.id, FieldValue]
+      );
+    });
+  }
+
+  async deleteRow(listId: string, rowId: string) {
+    const connection = await connect();
+
+    await connection.execute("DELETE FROM _rows WHERE id = ? AND listId = ?", [
+      rowId,
+      listId,
+    ]);
+  }
+
+  async getTemplates() {
+    const connection = await connect();
+    const [templates] = await connection.execute(
+      "SELECT id, name, listId FROM templates"
+    );
+    return templates;
+  }
+
+  async createFromTemplate(templateId: string, newListName: string) {
+    const connection = await connect();
+
+    const [templates] = await connection.execute(
+      "SELECT listId FROM templates WHERE id = ?",
+      [templateId]
+    );
+    const listId = templates[0].listId;
+
+    await connection.execute(
+      "INSERT INTO lists (id, name) VALUES (UUID(), ?)",
+      [newListName]
+    );
+
+    const [columns]: any[] = await connection.execute(
+      "SELECT * FROM columns WHERE listId = ?",
+      [listId]
+    );
+
+    const [result]: any[] = await connection.execute(
+      "SELECT id FROM lists WHERE name = ?",
+      [newListName]
+    );
+
+    columns.forEach((col) => {
+      connection.execute(
+        "INSERT INTO columns (id, name, type, listId) VALUES (UUID(), ?, ?, ?)",
+        [col.name, col.type, result[0].id]
+      );
+    });
   }
 }
 

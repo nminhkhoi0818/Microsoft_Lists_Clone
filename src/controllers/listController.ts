@@ -8,48 +8,29 @@ export class ListController {
     this.listService = listService;
   }
 
-  createList(req: Request, res: Response) {
+  async createList(req: Request, res: Response) {
     try {
       const { name } = req.body;
-      const newList = this.listService.createList(name);
+      const newList = await this.listService.createList(name);
       res.status(201).json(newList);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  createFromTemplate(req: Request, res: Response) {
+  async getAllLists(req: Request, res: Response) {
     try {
-      const { name, templateId } = req.body;
-      const newList = this.listService.createFromTemplate(name, templateId);
-      res.status(201).json(newList);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
-  }
-
-  getAllLists(req: Request, res: Response) {
-    try {
-      const lists = this.listService.getAllLists();
+      const lists = await this.listService.getAllLists();
       res.json(lists);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
   }
 
-  getAllTemplates(req: Request, res: Response) {
-    try {
-      const templates = this.listService.getAllTemplates();
-      res.json(templates);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message });
-    }
-  }
-
-  getListById(req: Request, res: Response) {
+  async getListById(req: Request, res: Response) {
     try {
       const { listId } = req.params;
-      const list = this.listService.getListById(listId);
+      const list = await this.listService.getListById(listId);
       res.json(list);
     } catch (error: any) {
       res.status(404).json({ error: error.message });
@@ -63,6 +44,16 @@ export class ListController {
       res.status(204).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
+    }
+  }
+
+  async getColumns(req: Request, res: Response) {
+    try {
+      const listId = req.params.listId;
+      const columns = await this.listService.getColumns(listId);
+      res.json(columns);
+    } catch (error: any) {
+      res.status(404).json({ error: error.message });
     }
   }
 
@@ -99,31 +90,13 @@ export class ListController {
     }
   }
 
-  getRows(req: Request, res: Response) {
+  async getRows(req: Request, res: Response) {
     try {
       const { listId } = req.params;
-      const search = req.query.search as string;
-      const sort = req.query.sort as string;
       const page = parseInt(req.query.page as string);
       const pageSize = parseInt(req.query.pageSize as string);
 
-      res.json(this.listService.getRows(listId, search, sort, page, pageSize));
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
-  }
-
-  filterRows(req: Request, res: Response) {
-    try {
-      const listId = req.params.listId;
-      const column = req.query.column as string;
-      const value = req.query.value as string[];
-      const page = parseInt(req.query.page as string);
-      const pageSize = parseInt(req.query.pageSize as string);
-
-      res.json(
-        this.listService.filterRows(listId, column, value, page, pageSize)
-      );
+      res.json(await this.listService.getRows(listId, page, pageSize));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -140,12 +113,32 @@ export class ListController {
     }
   }
 
-  updateCellData(req: Request, res: Response) {
+  async getFilteredRows(req: Request, res: Response) {
+    try {
+      const listId = req.params.listId;
+      const column = req.query.column as string;
+      const values = req.query.value as string[];
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const pageSize = parseInt(req.query.pageSize as string, 10) || 10;
+      const rows = await this.listService.filterRows(
+        listId,
+        column,
+        values,
+        page,
+        pageSize
+      );
+      res.json(rows);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  updateCellValue(req: Request, res: Response) {
     try {
       const listId = req.params.listId;
       const rowId = req.params.rowId;
-      const { data } = req.body;
-      this.listService.updateCellData(listId, rowId, data);
+      const { formValues } = req.body;
+      this.listService.updateCellData(listId, rowId, formValues);
       res.status(200).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -163,13 +156,19 @@ export class ListController {
     }
   }
 
-  addChoice(req: Request, res: Response) {
+  async getTemplates(req: Request, res: Response) {
     try {
-      const listId = req.params.listId;
-      const columnId = req.params.columnId;
-      const { choice } = req.body;
-      this.listService.addChoice(listId, columnId, choice);
-      res.status(200).send();
+      res.json(await this.listService.getTemplates());
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  createFromTemplate(req: Request, res: Response) {
+    try {
+      const { templateId, name } = req.body;
+      this.listService.createFromTemplate(templateId, name);
+      res.status(201).send();
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

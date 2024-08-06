@@ -31,6 +31,7 @@ class TextColumn extends Column {
     return data;
   }
 }
+
 class NumberColumn extends Column {
   defaultValue: number;
 

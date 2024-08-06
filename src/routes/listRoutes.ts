@@ -11,7 +11,11 @@ router.get("/", (req, res) => {
 });
 
 router.get("/templates", (req, res) => {
-  listController.getAllTemplates(req, res);
+  listController.getTemplates(req, res);
+});
+
+router.post("/from-template", (req, res) => {
+  listController.createFromTemplate(req, res);
 });
 
 router.get("/:listId", (req, res) => {
@@ -22,12 +26,12 @@ router.post("/", (req, res) => {
   listController.createList(req, res);
 });
 
-router.post("/from-template", (req, res) => {
-  listController.createFromTemplate(req, res);
-});
-
 router.delete("/:listId", (req, res) => {
   listController.deleteList(req, res);
+});
+
+router.get("/:listId/columns", (req, res) => {
+  listController.getColumns(req, res);
 });
 
 router.post("/:listId/columns", (req, res) => {
@@ -51,19 +55,15 @@ router.post("/:listId/rows", (req, res) => {
 });
 
 router.get("/:listId/rows/filter", (req, res) => {
-  listController.filterRows(req, res);
+  listController.getFilteredRows(req, res);
 });
 
 router.put("/:listId/rows/:rowId", (req, res) => {
-  listController.updateCellData(req, res);
+  listController.updateCellValue(req, res);
 });
 
 router.delete("/:listId/rows/:rowId", (req, res) => {
   listController.deleteRow(req, res);
-});
-
-router.post("/:listId/columns/:columnId/choices", (req, res) => {
-  listController.addChoice(req, res);
 });
 
 /**
@@ -119,41 +119,6 @@ router.post("/:listId/columns/:columnId/choices", (req, res) => {
 
 /**
  * @swagger
- * /api/lists/templates:
- *   get:
- *     summary: Get all templates
- *     tags: [Template]
- *     responses:
- *       200:
- *         description: A list of all templates
- *       400:
- *         description: Bad request
- */
-
-/**
- * @swagger
- * /api/lists/from-template:
- *   post:
- *     summary: Create a new list from a template
- *     tags: [Template]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               templateId:
- *                 type: string
- *               name:
- *                 type: string
- *     responses:
- *       201:
- *         description: List created
- */
-
-/**
- * @swagger
  * /api/lists/{listId}:
  *   delete:
  *     summary: Delete a list
@@ -167,6 +132,24 @@ router.post("/:listId/columns/:columnId/choices", (req, res) => {
  *     responses:
  *       204:
  *         description: List deleted
+ */
+
+/**
+ * @swagger
+ * /api/lists/{listId}/columns:
+ *   get:
+ *     summary: Get columns of a specific list
+ *     tags: [Column]
+ *     parameters:
+ *       - in: path
+ *         name: listId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The ID of the list to retrieve columns for
+ *     responses:
+ *       200:
+ *         description: A list of columns for the specified list
  */
 
 /**
@@ -268,16 +251,6 @@ router.post("/:listId/columns/:columnId/choices", (req, res) => {
  *           type: string
  *         description: The ID of the list to retrieve
  *       - in: query
- *         name: search
- *         schema:
- *           type: string
- *         description: A search term to filter rows
- *       - in: query
- *         name: sort
- *         schema:
- *           type: string
- *         description: The field to sort by (e.g., 'Title', 'Date')
- *       - in: query
  *         name: page
  *         schema:
  *           type: integer
@@ -372,7 +345,7 @@ router.post("/:listId/columns/:columnId/choices", (req, res) => {
  * @swagger
  * /api/lists/{listId}/rows/{rowId}:
  *   put:
- *     summary: Update a cell in a row
+ *     summary: Update cell data in a row
  *     tags: [Row]
  *     parameters:
  *       - in: path
@@ -392,7 +365,7 @@ router.post("/:listId/columns/:columnId/choices", (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               data:
+ *               formValues:
  *                 type: object
  *     responses:
  *       200:
@@ -425,23 +398,23 @@ router.post("/:listId/columns/:columnId/choices", (req, res) => {
 
 /**
  * @swagger
- * /api/lists/{listId}/columns/{columnId}/choices:
+ * /api/lists/templates:
+ *   get:
+ *     summary: Get all templates
+ *     tags: [Template]
+ *     responses:
+ *       200:
+ *         description: A list of all templates
+ *       400:
+ *         description: Bad request
+ */
+
+/**
+ * @swagger
+ * /api/lists/from-template:
  *   post:
- *     summary: Add an option to a column
- *     tags: [Column]
- *     parameters:
- *       - in: path
- *         name: listId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the list
- *       - in: path
- *         name: columnId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the column
+ *     summary: Create a new list from a template
+ *     tags: [Template]
  *     requestBody:
  *       required: true
  *       content:
@@ -449,14 +422,13 @@ router.post("/:listId/columns/:columnId/choices", (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               choice:
+ *               templateId:
  *                 type: string
- *                 description: The choice to be added to the column
+ *               name:
+ *                 type: string
  *     responses:
- *       200:
- *         description: Option added
- *       400:
- *         description: Bad request
+ *       201:
+ *         description: List created
  */
 
 export default router;
