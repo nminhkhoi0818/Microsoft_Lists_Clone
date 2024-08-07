@@ -65,7 +65,7 @@ class YesNoColumn extends Column {
     const value = parseInt(data);
     return {
       value,
-      displayText: value === 1 ? "Yes" : "No",
+      displayText: value === 1 ? "Yes" : "No"
     };
   }
 }
@@ -84,7 +84,7 @@ class DateColumn extends Column {
     const date = new Date(data);
     return {
       isoDate: date.toISOString(),
-      localDate: date.toLocaleDateString(),
+      localDate: date.toLocaleDateString()
     };
   }
 }
@@ -101,12 +101,10 @@ class HyperLinkColumn extends Column {
 
   validate(value: any): boolean {
     const [url, displayText] = value.split(", ");
-    if (url && displayText) {
-      this.url = url;
-      this.displayText = displayText;
-      return true;
-    }
-    return false;
+    return (
+      url.match(/(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g) &&
+      displayText.length > 0
+    );
   }
 
   mapDataCol(data: string) {
@@ -114,7 +112,7 @@ class HyperLinkColumn extends Column {
 
     return {
       url,
-      displayText,
+      displayText
     };
   }
 }
@@ -217,7 +215,7 @@ class LocationColumn extends Column {
     const [displayName, address] = data.split(", ");
     return {
       displayName,
-      address,
+      address
     };
   }
 }
@@ -236,7 +234,7 @@ class ImageColumn extends Column {
     const [url, fileName] = data.split(", ");
     return {
       url,
-      fileName,
+      fileName
     };
   }
 }
@@ -256,7 +254,7 @@ class PersonColumn extends Column {
     return {
       title,
       picture,
-      email,
+      email
     };
   }
 }
@@ -303,5 +301,5 @@ export {
   LocationColumn,
   ImageColumn,
   ManagedMetadataColumn,
-  LookupColumn,
+  LookupColumn
 };

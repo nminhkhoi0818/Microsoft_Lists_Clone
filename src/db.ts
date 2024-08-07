@@ -1,6 +1,11 @@
 import mysql from "mysql2/promise";
 
-export const connectionConfig = {};
+export const connectionConfig = {
+  host: "127.0.0.1",
+  user: "root",
+  password: "Minhkhoi@2003",
+  database: "mslists"
+};
 
 let connection: mysql.Connection;
 

@@ -14,6 +14,14 @@ router.get("/templates", (req, res) => {
   listController.getTemplates(req, res);
 });
 
+router.get("/templates/:templateId", (req, res) => {
+  listController.getTemplateById(req, res);
+});
+
+router.post("/templates", (req, res) => {
+  listController.createTemplate(req, res);
+});
+
 router.post("/from-template", (req, res) => {
   listController.createFromTemplate(req, res);
 });
@@ -72,9 +80,28 @@ router.delete("/:listId/rows/:rowId", (req, res) => {
  *   get:
  *     summary: Get all lists
  *     tags: [List]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of items per page
  *     responses:
  *       200:
  *         description: A list of all lists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
  *       400:
  *         description: Bad request
  */
@@ -402,9 +429,52 @@ router.delete("/:listId/rows/:rowId", (req, res) => {
  *   get:
  *     summary: Get all templates
  *     tags: [Template]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number to retrieve
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of items per page
  *     responses:
  *       200:
  *         description: A list of all templates
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       400:
+ *         description: Bad request
+ */
+
+/**
+ * @swagger
+ * /api/lists/templates:
+ *   post:
+ *     summary: Create a new template
+ *     tags: [Template]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               listId:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Template created
  *       400:
  *         description: Bad request
  */
@@ -429,6 +499,28 @@ router.delete("/:listId/rows/:rowId", (req, res) => {
  *     responses:
  *       201:
  *         description: List created
+ */
+
+/**
+ * @swagger
+ * /api/lists/templates/{templateId}:
+ *   get:
+ *     summary: Get a template by ID
+ *     tags: [Template]
+ *     parameters:
+ *       - in: path
+ *         name: templateId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The ID of the template to retrieve
+ *     responses:
+ *       200:
+ *         description: A specific template
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Template not found
  */
 
 export default router;
