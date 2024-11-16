@@ -1,26 +1,30 @@
 import { v4 as uuidv4 } from "uuid";
 import { Column } from "./Column";
+import { Row } from "./Row";
 
 class Form {
   id: string;
   title: string;
   columns: Column[];
+  rows: Row[];
 
-  constructor(title: string, columns: Column[]) {
+  constructor(title: string, columns: Column[], rows: Row[]) {
     this.id = uuidv4();
     this.title = title;
     this.columns = columns;
+    this.rows = rows;
   }
 
-  addField(column: Column) {
+  addColumn(column: Column) {
     if (this.columns.find((field) => field.name === column.name)) {
-      throw new Error("Field name already exists");
+      throw new Error("Column name already exists");
     }
     this.columns.push(column);
   }
 
-  hideField(colName: string) {
-    this.columns = this.columns.filter((field) => field.name !== colName);
+  hideColumn(colName: string) {
+    let column = this.columns.find((field) => field.name === colName);
+    column!.isHidden = true;
   }
 }
 

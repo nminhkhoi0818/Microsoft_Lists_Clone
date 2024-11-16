@@ -1,17 +1,18 @@
 import { v4 as uuidv4 } from "uuid";
 import { Column } from "./Column";
+import { Row } from "./Row";
 
 class Template {
   id: string;
   name: string;
   columns: Column[];
-  summary: string;
+  rows: Row[];
 
-  constructor(name: string, columns: Column[], summary: string) {
-    this.id = uuidv4();
+  constructor(name: string, columns: Column[], rows: Row[], id?: string) {
+    this.id = id ?? uuidv4();
     this.name = name;
     this.columns = columns;
-    this.summary = summary;
+    this.rows = rows;
   }
 }
 

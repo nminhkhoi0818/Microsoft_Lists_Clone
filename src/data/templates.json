@@ -1,42 +1,124 @@
 {
-  "templates": [
-    {
-      "name": "Template tracker",
-      "columns": [
-        { "type": "TextColumn", "name": "Full Name" },
-        { "type": "NumberColumn", "name": "Age" },
-        { "type": "YesNoColumn", "name": "Is Active" }
-      ],
-      "description": "A template for tracking people"
-    },
-    {
-      "name": "Task tracker",
-      "columns": [
-        { "type": "TextColumn", "name": "Task Name" },
-        { "type": "DateColumn", "name": "Due Date" },
-        { "type": "YesNoColumn", "name": "Completed" },
-        {
-          "type": "ChoiceColumn",
-          "name": "Priority",
-          "choices": ["High", "Medium", "Low"]
-        }
-      ],
-      "description": "A template for tracking tasks"
-    },
-    {
-      "name": "Project tracker",
-      "columns": [
-        { "type": "TextColumn", "name": "Project Name" },
-        { "type": "DateColumn", "name": "Start Date" },
-        { "type": "DateColumn", "name": "End Date" },
-        { "type": "NumberColumn", "name": "Budget" },
-        {
-          "type": "ChoiceColumn",
-          "name": "Status",
-          "choices": ["Pending", "In Progress", "Completed"]
-        }
-      ],
-      "description": "A template for tracking projects"
-    }
-  ]
-}
+    "templates": [
+      {
+        "id": "26f02ae3-8a9e-41a4-8ac5-b96f6906a1a0",
+        "name": "Template tracker",
+        "columns": [
+          {
+            "id": "77b97566-923d-4c36-9351-1a4771b42017",
+            "name": "Full Name",
+            "type": "Text",
+            "isHidden": false
+          },
+          {
+            "id": "e6a49f2e-4813-479b-b65e-245c34368a24",
+            "name": "Age",
+            "type": "Number",
+            "isHidden": false
+          },
+          {
+            "id": "07159c26-7418-43fd-8c28-b19d5a9330ca",
+            "name": "Is Active",
+            "type": "YesNo",
+            "isHidden": false
+          }
+        ],
+        "rows": [
+          {
+            "data": {
+              "Full Name": "John Doe",
+              "Age": 30,
+              "Is Active": "1"
+            }
+          },
+          {
+            "data": {
+              "Full Name": "Jane Doe",
+              "Age": 25,
+              "Is Active": "0"
+            }
+          },
+          {
+            "data": {
+              "Full Name": "Alice",
+              "Age": 35,
+              "Is Active": "1"
+            }
+          }
+        ] 
+      },
+      {
+        "id": "0d4a5c74-69c0-4c32-99a1-d2d78440aad7",
+        "name": "Task tracker",
+        "columns": [
+          {
+            "id": "80ea3b01-a818-4825-8713-93221cd0048d",
+            "name": "Task Name",
+            "type": "Text",
+            "isHidden": false
+          },
+          {
+            "id": "6417b1ae-3b13-4649-bb20-fb0bf4332f29",
+            "name": "Due Date",
+            "type": "Date",
+            "isHidden": false
+          },
+          {
+            "id": "f03fd5a8-bcd5-4ad6-ac3b-db9860e47317",
+            "name": "Completed",
+            "type": "YesNo",
+            "isHidden": false
+          },
+          {
+            "id": "c1b4c6ad-4ced-4537-af4e-e3a7bcef1af7",
+            "name": "Priority",
+            "type": "Choice",
+            "isHidden": false,
+            "choices": ["High", "Medium", "Low"]
+          }
+        ],
+        "rows": [
+        ]
+      },
+      {
+        "id": "4cc9406a-3521-4e0a-8cd6-675c72b3c92c",
+        "name": "Project tracker",
+        "columns": [
+          {
+            "id": "19bd22c4-b87e-4c83-b1b1-f41eca8d732a",
+            "name": "Project Name",
+            "type": "Text",
+            "isHidden": false
+          },
+          {
+            "id": "36178933-2478-4086-896e-972e5aaed56f",
+            "name": "Start Date",
+            "type": "Date",
+            "isHidden": false
+          },
+          {
+            "id": "75c14d45-08a0-426f-ace5-1c3d67dceeff",
+            "name": "End Date",
+            "type": "Date",
+            "isHidden": false
+          },
+          {
+            "id": "8329472f-8d43-42de-a3d4-7b2d9bcaa10c",
+            "name": "Budget",
+            "type": "Number",
+            "isHidden": false
+          },
+          {
+            "id": "ac678306-8c48-4197-bb7d-9a3b07ff6837",
+            "name": "Status",
+            "type": "MultiChoice",
+            "isHidden": false,
+            "choices": ["In Progress", "Completed", "Cancelled"]
+          }
+        ],
+        "rows": [
+          
+        ]
+      }
+    ]
+  }

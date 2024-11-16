@@ -1,0 +1,163 @@
+{
+  "lists": [
+    {
+      "id": "aa6fdfab-c449-4e23-8528-01f44ddcdd7d",
+      "name": "My List",
+      "columns": [
+        {
+          "id": "faf89b53-b757-4019-b8c3-bfd281c3feba",
+          "name": "Full Name",
+          "type": "Text",
+          "isHidden": false
+        },
+        {
+          "id": "ad0794d1-2b46-494b-88a0-64f3340ce723",
+          "name": "Age",
+          "type": "Number",
+          "isHidden": false,
+          "defaultValue": 18
+        },
+        {
+          "id": "aee84969-3601-4144-a5d4-149b3bc1a824",
+          "name": "Youtube Link",
+          "type": "Hyperlink",
+          "isHidden": false
+        },
+        {
+          "id": "5d084f59-d553-40d4-8558-6890cacc79c4",
+          "name": "My Image",
+          "type": "Image",
+          "isHidden": false
+        },
+        {
+          "id": "0729c7b1-572c-4b72-96c9-ad9c9adb1ba7",
+          "name": "Person Column",
+          "type": "Person",
+          "isHidden": false
+        },
+        {
+          "id": "7046f337-0611-4bb3-84ef-10e94e407d6a",
+          "name": "Married",
+          "type": "YesNo",
+          "isHidden": false,
+          "defaultValue": "Yes"
+        },
+        {
+          "id": "a83f19f8-91d6-40b9-b897-45af0ac96451",
+          "name": "Hometown",
+          "type": "Location",
+          "isHidden": false
+        },
+        {
+          "id": "087a5abf-10f9-4fb0-97db-9b3dbee56f9f",
+          "name": "Courses",
+          "type": "MultiChoice",
+          "isHidden": false,
+          "choices": [
+            "Math",
+            "English",
+            "Geography"
+          ],
+          "defaultValue": ""
+        },
+        {
+          "id": "0d5eebb6-39ef-4e7a-af8d-2a033866d603",
+          "name": "Birthday",
+          "type": "Date",
+          "isHidden": false
+        },
+        {
+          "id": "3bf1bb92-5337-496a-b2e1-1c288251de75",
+          "name": "Teacher",
+          "type": "Person",
+          "isHidden": false
+        }
+      ],
+      "rows": [
+        {
+          "id": "895c5a4d-9602-44ea-9f9f-5906f9d428e2",
+          "data": {
+            "Full Name": "Minh Khoi",
+            "Age": 21,
+            "Youtube Link": {
+              "link": "https://www.youtube.com",
+              "displayText": "Youtube"
+            },
+            "Married": {
+              "value": 1,
+              "displayText": "Yes"
+            },
+            "My Image": {
+              "url": "cat.png",
+              "fileName": "Cat Picture"
+            },
+            "Birthday": {
+              "isoDate": "2005-11-01T17:00:00.000Z",
+              "localDate": "11/2/2005"
+            },
+            "Hometown": {
+              "displayName": "Ho Chi Minh City Museum",
+              "address": "65 Đuong Ly Tu Trong"
+            },
+            "Courses": [
+              "Math",
+              "English"
+            ]
+          }
+        },
+        {
+          "id": "75752829-890e-4385-bfc8-6c6b78851c05",
+          "data": {
+            "Full Name": "Nam Pham",
+            "Age": 31,
+            "Youtube Link": {
+              "url": "https://www.youtube.com/@nampham",
+              "displayText": "Nam Pham Youtube"
+            },
+            "Married": {
+              "value": 0,
+              "displayText": "No"
+            },
+            "My Image": {
+              "url": "nampham.png",
+              "fileName": "Nam Pham Picture"
+            },
+            "Birthday": {
+              "isoDate": "1999-09-01T17:00:00.000Z",
+              "localDate": "9/2/1999"
+            },
+            "Hometown": {
+              "displayName": "Long An",
+              "address": "100 Duong Nguyen Minh Duong"
+            },
+            "Courses": [
+              "Math"
+            ],
+            "Teacher": {
+              "title": "Nguyen Van B",
+              "picture": "avatar1.png",
+              "email": "vanb@edu.vn"
+            }
+          }
+        }
+      ],
+      "views": [],
+      "forms": []
+    },
+    {
+      "id": "2322e599-c336-4395-bd3c-1a4dccb8d8ae",
+      "name": "My List 2",
+      "columns": [
+        {
+          "id": "Title",
+          "name": "",
+          "type": "Text",
+          "isHidden": false
+        }
+      ],
+      "rows": [],
+      "views": [],
+      "forms": []
+    }
+  ]
+}
